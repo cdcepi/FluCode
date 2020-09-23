@@ -1,0 +1,285 @@
+---
+title: "Antivirals - EPI1 Scenarios"
+author: "Pragati Prasad"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Mean and Cumulative with 95% CI  {.tabset}
+
+EPI1: R0 1.4 and “2009-like” severity
+
+### HP08
+
+AV
+
+Antivirals
+
+```{r HP08, warning=FALSE, message = FALSE}
+library(ggsci)
+library(reshape)
+library(dplyr)
+library(gridExtra)
+library(ggplot2)
+library(egg)
+library(plyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+
+path <- "../model-forecasts/"
+
+team.folder <- c("Columbia/COL/EPI1/", "Northeastern/EPI1/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/EPI1/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2")
+file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
+read_overall_mean <- function(scn){
+  
+  cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
+
+  s <- read.csv(paste0(path,team.folder[1],scn,file.types[4],"_",team.abbrev[1],".csv"))
+  antivirals <- data.frame(c(s[which(s$Agegroup == "Overall" &
+                                       s$Bin %in% cols),],
+                             `team` = team.abbrev[1]))
+  
+  for(i in 2:6){
+    
+    if(i == 4){
+      scn = gsub("HP", "HP_", scn)
+    }
+    if(i == 5){
+      scn = gsub("_", "", scn)
+    }
+    if(i == 6){
+      scn = paste0(scn, "_")
+      file.types[4] <- "Antiviral"
+    }
+    f = paste0(path,team.folder[i],scn,file.types[4],"_",team.abbrev[i],".csv")
+    if(i == 5){
+      f =  paste0(path,team.folder[i],scn,file.types[4],team.abbrev[i],".csv")
+    }
+    if(file.exists(f)){
+      s <- read.csv(f)
+      if(ncol(s) > 58){
+        s <- s[-1]
+      }
+      antivirals <- rbind.fill(antivirals, 
+                               data.frame(c(s[which(s$Agegroup == "Overall" & 
+                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+    }
+    
+  }
+  weeks <- paste0("Week",1:52)
+  antivirals$Cml[which(is.na(antivirals$Cml))] <- antivirals$cml[which(is.na(antivirals$Cml))]
+  cml <<- antivirals[c("Cml", "team", "Bin")]
+  
+  long <- gather(antivirals, week, illnesses, weeks, factor_key=TRUE)
+  long$week <- as.integer(gsub("Week", "", long$week))
+  
+  cols <- c("Bin", "team", "week", "illnesses")
+  long <- long[cols]
+  long_wide <- spread(long, Bin, illnesses)
+  
+  return(long_wide)
+}
+
+scenario <- "HP08_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% AntiviralTX") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % AntiviralTX` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Averted % AntiviralTX (HP01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % AntiviralTX` - table$`Cumulative % AntiviralTX`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "HP08", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+
+### HP09
+
+VX1 & SC1 & AV
+
+* “Early”: Vaccine available 100 days after September 1 
+* Weekly Symptomatic Prevalence > 1% trigger, early (VX1) vaccine availability reopening  
+* Antivirals
+
+```{r HP09, warning=FALSE, message = FALSE}
+
+scenario <- "HP09_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% AntiviralTX") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % AntiviralTX` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Averted % AntiviralTX (HP01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % AntiviralTX` - table$`Cumulative % AntiviralTX`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "HP09", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+### HP10
+
+VX1 & SC2 & AV
+
+* “Early”: Vaccine available 100 days after September 1 
+* Close on October 28, early (VX1) vaccine availability reopening  
+* Antivirals
+
+```{r HP10, warning=FALSE, message = FALSE}
+
+scenario <- "HP10_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% AntiviralTX") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % AntiviralTX` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Averted % AntiviralTX (HP01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % AntiviralTX` - table$`Cumulative % AntiviralTX`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "HP10", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+### HP11
+
+VX2 & SC3 & AV
+
+* “Normal”: Vaccine available 150 days after September 1 
+* Weekly Symptomatic Prevalence > 1% trigger, normal (VX2) vaccine availability reopening  
+* Antivirals
+
+```{r HP11, warning=FALSE, message = FALSE}
+
+scenario <- "HP11_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% AntiviralTX") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % AntiviralTX` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Averted % AntiviralTX (HP01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % AntiviralTX` - table$`Cumulative % AntiviralTX`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "HP11", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+### HP12
+
+VX2 & SC4 & AV
+
+* “Normal”: Vaccine available 150 days after September 1 
+* Close on October 28, normal (VX2) vaccine availability reopening  
+* Antivirals
+
+```{r HP12, warning=FALSE, message = FALSE}
+
+scenario <- "HP12_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% AntiviralTX") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % AntiviralTX` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Averted % AntiviralTX (HP01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % AntiviralTX` - table$`Cumulative % AntiviralTX`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "HP12", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
