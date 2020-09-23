@@ -32,8 +32,8 @@ library(kableExtra)
 
 path <- "../model-forecasts/"
 
-team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/")
-team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2")
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU")
 file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
 scn = "RL01_"
 read_overall_mean <- function(scn){
@@ -45,7 +45,7 @@ read_overall_mean <- function(scn){
                                        s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
-  for(i in 2:6){
+  for(i in 2:7){
     
     if(i == 4){
       scn = gsub("RL", "RL_", scn)
@@ -66,6 +66,9 @@ read_overall_mean <- function(scn){
       s <- read.csv(f)
       if(ncol(s) > 58){
         s <- s[-1]
+      }
+      if(i == 7){
+        team.abbrev[i] = "NEU2"
       }
       hosp <- rbind.fill(hosp, data.frame(c(s[which(s$Agegroup == "Overall" & 
                                                       s$Bin %in% cols),],`team` = team.abbrev[i])))

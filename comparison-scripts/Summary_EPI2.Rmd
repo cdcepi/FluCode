@@ -146,7 +146,7 @@ scenario <- "HP17_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP17 <- long$Cml
 
 # Peak Magnitude
@@ -156,7 +156,7 @@ scenario <- "HP18_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP18 <- long$Cml
 
 # Peak Magnitude
@@ -166,7 +166,7 @@ scenario <- "HP19_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP19 <- long$Cml
 
 # Peak Magnitude
@@ -176,7 +176,7 @@ scenario <- "HP20_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP20 <- long$Cml
 
 # Peak Magnitude
@@ -186,7 +186,7 @@ scenario <- "HP21_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP21 <- long$Cml
 
 # Peak Magnitude
@@ -196,7 +196,7 @@ scenario <- "HP22_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP22 <- long$Cml
 
 # Peak Magnitude
@@ -206,7 +206,7 @@ scenario <- "HP23_"
 long <- read_ill(scn = scenario)
 
 # Cumulative % Ill
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP23 <- long$Cml
 
 # Peak Magnitude
@@ -303,7 +303,7 @@ scenario <- "HP18_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP18 <- long$Cml
 
 # Peak Magnitude
@@ -313,7 +313,7 @@ scenario <- "HP19_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP19 <- long$Cml
 
 # Peak Magnitude
@@ -323,7 +323,7 @@ scenario <- "HP20_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP20 <- long$Cml
 
 # Peak Magnitude
@@ -333,7 +333,7 @@ scenario <- "HP21_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP21 <- long$Cml
 
 # Peak Magnitude
@@ -343,7 +343,7 @@ scenario <- "HP22_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP22 <- long$Cml
 
 # Peak Magnitude
@@ -353,7 +353,7 @@ scenario <- "HP23_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP23 <- long$Cml
 
 # Peak Magnitude
@@ -363,7 +363,7 @@ scenario <- "HP24_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Hospitalizations per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP24 <- long$Cml
 
 # Peak Magnitude
@@ -443,7 +443,7 @@ scenario <- "HP18_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP18 <- long$Cml
 
 # Peak Magnitude
@@ -453,7 +453,7 @@ scenario <- "HP19_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP19 <- long$Cml
 
 # Peak Magnitude
@@ -463,7 +463,7 @@ scenario <- "HP20_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP20 <- long$Cml
 
 # Peak Magnitude
@@ -473,7 +473,7 @@ scenario <- "HP21_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP21 <- long$Cml
 
 # Peak Magnitude
@@ -483,7 +483,7 @@ scenario <- "HP22_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP22 <- long$Cml
 
 # Peak Magnitude
@@ -493,7 +493,7 @@ scenario <- "HP23_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP23 <- long$Cml
 
 # Peak Magnitude
@@ -503,7 +503,7 @@ scenario <- "HP24_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Deaths per 100K
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP24 <- long$Cml
 
 # Peak Magnitude
@@ -535,7 +535,6 @@ tab_HP20 <- read_ill(scn = "HP20_")
 
 # Cumulative AV
 tab_HP20$team <- as.character(tab_HP20$team)
-tab_HP20 <- InsertRow(tab_HP20, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
 cml <- data.frame(`HP20` = tab_HP20$Cml)
 
 # Peak Magnitude
@@ -548,7 +547,7 @@ scenario <- "HP21_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Antivirals 
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP21 <- long$Cml
 
 # Peak Magnitude
@@ -558,7 +557,7 @@ scenario <- "HP22_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Antivirals 
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP22 <- long$Cml
 
 # Peak Magnitude
@@ -568,7 +567,7 @@ scenario <- "HP23_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Antivirals 
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP23 <- long$Cml
 
 # Peak Magnitude
@@ -578,7 +577,7 @@ scenario <- "HP24_"
 long <- read_ill(scn = scenario)
 
 # Cumulative Antivirals 
-long <- InsertRow(long, c(0.00, "IMP", "sm.mean", 0.00), RowNum = 5)
+
 cml$HP24 <- long$Cml
 
 # Peak Magnitude
