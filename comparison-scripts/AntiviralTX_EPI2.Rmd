@@ -118,6 +118,58 @@ rownames(table) <- NULL
 knitr::kable(table[5:7], digits = 2, caption = "HP20", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+
+read_ages <- function(scn){
+  
+  cols <- c("sm.mean")
+
+  s <- read.csv(paste0(path,team.folder[1],scn,file.types[4],"_",team.abbrev[1],".csv"))
+  antivirals <- data.frame(c(s[which(s$Agegroup != "Overall" &
+                                       s$Bin %in% cols),],
+                             `team` = team.abbrev[1]))
+  
+  for(i in 2:6){
+    
+    if(i == 4){
+      scn = gsub("HP", "HP_", scn)
+    }
+     if(i == 5){
+      scn = gsub("_", "", scn)
+    }
+    if(i == 6){
+      scn = paste0(scn, "_")
+      file.types[4] <- "Antiviral"
+    }
+    f = paste0(path,team.folder[i],scn,file.types[4],"_",team.abbrev[i],".csv")
+    if(i == 5){
+      f =  paste0(path,team.folder[i],scn,file.types[4],team.abbrev[i],".csv")
+    }
+    if(file.exists(f)){
+      s <- read.csv(f)
+      if(ncol(s) > 58){
+        s <- s[-1]
+      }
+      antivirals <- rbind.fill(antivirals, 
+                               data.frame(c(s[which(s$Agegroup != "Overall" & 
+                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+    }
+    
+  }
+  weeks <- paste0("Week",1:52)
+  antivirals$Cml[which(is.na(antivirals$Cml))] <- antivirals$cml[which(is.na(antivirals$Cml))]
+  cml <- antivirals[c("Cml", "team", "Bin", "Agegroup")]
+  cml$Agegroup <- sub("yr", "years", cml$Agegroup)
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Cml <- cml$Cml / 100
+  
+  return(cml)
+}
+
+ages <- read_ages(scn = "HP20_")
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 ```
 
 
@@ -160,6 +212,11 @@ rownames(table) <- NULL
 knitr::kable(table[5:7], digits = 2, caption = "HP21", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 ```
 
 ### HP22
@@ -201,6 +258,11 @@ rownames(table) <- NULL
 knitr::kable(table[5:7], digits = 2, caption = "HP22", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 ```
 
 ### HP23
@@ -242,6 +304,11 @@ rownames(table) <- NULL
 knitr::kable(table[5:7], digits = 2, caption = "HP23", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 ```
 
 ### HP24
@@ -283,4 +350,9 @@ rownames(table) <- NULL
 knitr::kable(table[5:7], digits = 2, caption = "HP24", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3() 
 ```

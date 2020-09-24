@@ -114,6 +114,64 @@ knitr::kable(table[5:7], digits = 2, caption = "HP13, No Intervention", align=re
 
 table1 <- table
 
+
+#Bar charts for age stratifications
+team.folder <- c("Columbia/COL/EPI2/", "Northeastern/EPI2/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/EPI2/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2")
+file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
+scn = "HP13_"
+read_ages <- function(scn){
+  
+  cols <- c("sm.mean")
+
+  s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
+  symillness <- data.frame(c(s[which(s$Agegroup != "Overall" &
+                                       s$Bin %in% cols),],
+                             `team` = team.abbrev[1]))
+  
+  for(i in 2:6){
+    
+    if(i == 4){
+      scn = gsub("HP", "HP_", scn)
+    }
+    if(i == 5){
+      scn = gsub("_", "", scn)
+    }
+    if(i == 6){
+      scn = paste0(scn, "_")
+    }
+    f = paste0(path,team.folder[i],scn,file.types[1],"_",team.abbrev[i],".csv")
+    if(i == 5){
+      f =  paste0(path,team.folder[i],scn,file.types[1],team.abbrev[i],".csv")
+    }
+    if(file.exists(f)){
+      s <- read.csv(f)
+      if(ncol(s) > 58){
+        s <- s[-1]
+      }
+      symillness <- rbind.fill(symillness, 
+                               data.frame(c(s[which(s$Agegroup != "Overall" & 
+                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+    }
+    
+  }
+  weeks <- paste0("Week",1:52)
+  symillness$Cml[which(is.na(symillness$Cml))] <- symillness$cml[which(is.na(symillness$Cml))]
+  cml <- symillness[c("Cml", "team", "Bin", "Agegroup")]
+  cml$Agegroup <- sub("yr", "years", cml$Agegroup)
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Cml <- cml$Cml / 100
+  
+  return(cml)
+}
+
+ages <- read_ages(scn = "HP13_")
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+
 ```
 
 ### HP14
@@ -146,12 +204,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP14: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP14: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -186,12 +252,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP15: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP15: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -228,12 +302,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP16: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP16: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -268,12 +350,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP17: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP17: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -308,12 +398,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP18: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP18: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -349,12 +447,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP19: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP19: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -389,12 +495,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP20: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP20: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -431,12 +545,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP21: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP21: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -472,12 +594,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP22: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP22: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -513,12 +643,20 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP23: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP23: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
 
@@ -554,11 +692,19 @@ table$Team <- table$team
 table$`Cumulative % Ill` <- table$Cml
 table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
 
-table$`Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`Absolute Averted % Ill (HP13)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (HP13)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
 
 rownames(table) <- NULL
 
-knitr::kable(table[5:8], digits = 2, caption = "HP24: Compared to HP13", align=rep('c', 4)) %>%
+knitr::kable(table[5:9], digits = 2, caption = "HP24: Compared to HP13", align=rep('c', 4)) %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
 
 ```
