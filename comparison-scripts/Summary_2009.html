@@ -11,7 +11,7 @@
 
 <meta name="author" content="Pragati Prasad" />
 
-<meta name="date" content="2020-09-25" />
+<meta name="date" content="2020-10-01" />
 
 <title>Summary of 2009 Scenarios</title>
 
@@ -445,7 +445,7 @@ summary {
 
 <h1 class="title toc-ignore">Summary of 2009 Scenarios</h1>
 <h4 class="author">Pragati Prasad</h4>
-<h4 class="date">2020-09-25</h4>
+<h4 class="date">2020-10-01</h4>
 
 </div>
 
@@ -1101,6 +1101,234 @@ NEU2
 </tbody>
 </table>
 </div>
+<div id="reduction-in-ill" class="section level3">
+<h3>% Reduction in Ill</h3>
+<pre class="r"><code>r &lt;- read.csv(&quot;./SympIllness_2009.csv&quot;)
+r$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, r$scenario)
+
+w &lt;- spread(r[2:4], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+
+knitr::kable(w, digits = 2, caption = &quot;% Reduction in Burden (RL01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden (RL01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+team
+</th>
+<th style="text-align:right;">
+RL02
+</th>
+<th style="text-align:right;">
+RL03
+</th>
+<th style="text-align:right;">
+RL04
+</th>
+<th style="text-align:right;">
+RL05
+</th>
+<th style="text-align:right;">
+RL06
+</th>
+<th style="text-align:right;">
+RL07
+</th>
+<th style="text-align:right;">
+RL08
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+7.92
+</td>
+<td style="text-align:right;">
+1.80
+</td>
+<td style="text-align:right;">
+10.72
+</td>
+<td style="text-align:right;">
+3.57
+</td>
+<td style="text-align:right;">
+1.90
+</td>
+<td style="text-align:right;">
+16.88
+</td>
+<td style="text-align:right;">
+23.21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+7.76
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+<td style="text-align:right;">
+9.80
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+-8.51
+</td>
+<td style="text-align:right;">
+19.39
+</td>
+<td style="text-align:right;">
+14.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+6.96
+</td>
+<td style="text-align:right;">
+93.13
+</td>
+<td style="text-align:right;">
+94.99
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+24.56
+</td>
+<td style="text-align:right;">
+94.99
+</td>
+<td style="text-align:right;">
+97.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+1.82
+</td>
+<td style="text-align:right;">
+-1.67
+</td>
+<td style="text-align:right;">
+9.87
+</td>
+<td style="text-align:right;">
+28.29
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+34.06
+</td>
+<td style="text-align:right;">
+40.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU2
+</td>
+<td style="text-align:right;">
+1.82
+</td>
+<td style="text-align:right;">
+-1.67
+</td>
+<td style="text-align:right;">
+9.87
+</td>
+<td style="text-align:right;">
+28.29
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+34.06
+</td>
+<td style="text-align:right;">
+40.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+12.37
+</td>
+<td style="text-align:right;">
+8.02
+</td>
+<td style="text-align:right;">
+28.19
+</td>
+<td style="text-align:right;">
+44.12
+</td>
+<td style="text-align:right;">
+26.78
+</td>
+<td style="text-align:right;">
+66.75
+</td>
+<td style="text-align:right;">
+43.90
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+4.55
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+4.55
+</td>
+<td style="text-align:right;">
+27.27
+</td>
+<td style="text-align:right;">
+4.55
+</td>
+<td style="text-align:right;">
+45.45
+</td>
+<td style="text-align:right;">
+9.09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="cumulative-hosps" class="section level3">
 <h3>Cumulative Hosps</h3>
 <pre class="r"><code>file.type = file.types[2]
@@ -1666,6 +1894,234 @@ NEU2
 </tbody>
 </table>
 </div>
+<div id="reduction-in-hosps" class="section level3">
+<h3>% Reduction in Hosps</h3>
+<pre class="r"><code>r &lt;- read.csv(&quot;./Hospitalizations_2009.csv&quot;)
+r$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, r$scenario)
+
+w &lt;- spread(r[2:4], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+
+knitr::kable(w, digits = 2, caption = &quot;% Reduction in Burden (RL01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden (RL01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+team
+</th>
+<th style="text-align:right;">
+RL02
+</th>
+<th style="text-align:right;">
+RL03
+</th>
+<th style="text-align:right;">
+RL04
+</th>
+<th style="text-align:right;">
+RL05
+</th>
+<th style="text-align:right;">
+RL06
+</th>
+<th style="text-align:right;">
+RL07
+</th>
+<th style="text-align:right;">
+RL08
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+9.68
+</td>
+<td style="text-align:right;">
+2.08
+</td>
+<td style="text-align:right;">
+12.79
+</td>
+<td style="text-align:right;">
+2.68
+</td>
+<td style="text-align:right;">
+-0.42
+</td>
+<td style="text-align:right;">
+18.55
+</td>
+<td style="text-align:right;">
+24.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+8.51
+</td>
+<td style="text-align:right;">
+1.40
+</td>
+<td style="text-align:right;">
+10.70
+</td>
+<td style="text-align:right;">
+-1.47
+</td>
+<td style="text-align:right;">
+-11.98
+</td>
+<td style="text-align:right;">
+19.27
+</td>
+<td style="text-align:right;">
+13.27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+6.85
+</td>
+<td style="text-align:right;">
+92.84
+</td>
+<td style="text-align:right;">
+94.72
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+23.66
+</td>
+<td style="text-align:right;">
+94.72
+</td>
+<td style="text-align:right;">
+97.26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+1.96
+</td>
+<td style="text-align:right;">
+-0.61
+</td>
+<td style="text-align:right;">
+11.15
+</td>
+<td style="text-align:right;">
+24.58
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+31.55
+</td>
+<td style="text-align:right;">
+38.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU2
+</td>
+<td style="text-align:right;">
+1.96
+</td>
+<td style="text-align:right;">
+-0.61
+</td>
+<td style="text-align:right;">
+11.15
+</td>
+<td style="text-align:right;">
+24.58
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+31.55
+</td>
+<td style="text-align:right;">
+38.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+15.84
+</td>
+<td style="text-align:right;">
+35.69
+</td>
+<td style="text-align:right;">
+52.04
+</td>
+<td style="text-align:right;">
+44.96
+</td>
+<td style="text-align:right;">
+28.01
+</td>
+<td style="text-align:right;">
+78.64
+</td>
+<td style="text-align:right;">
+62.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+5.84
+</td>
+<td style="text-align:right;">
+14.60
+</td>
+<td style="text-align:right;">
+18.98
+</td>
+<td style="text-align:right;">
+24.09
+</td>
+<td style="text-align:right;">
+4.38
+</td>
+<td style="text-align:right;">
+52.55
+</td>
+<td style="text-align:right;">
+21.90
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="cumulative-deaths" class="section level3">
 <h3>Cumulative Deaths</h3>
 <pre class="r"><code>file.type = file.types[3]
@@ -2226,6 +2682,234 @@ NEU2
 </td>
 <td style="text-align:right;">
 0.24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="reduction-in-deaths" class="section level3">
+<h3>% Reduction in Deaths</h3>
+<pre class="r"><code>r &lt;- read.csv(&quot;./Deaths_2009.csv&quot;)
+r$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, r$scenario)
+
+w &lt;- spread(r[2:4], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+
+knitr::kable(w, digits = 2, caption = &quot;% Reduction in Burden (RL01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden (RL01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+team
+</th>
+<th style="text-align:right;">
+RL02
+</th>
+<th style="text-align:right;">
+RL03
+</th>
+<th style="text-align:right;">
+RL04
+</th>
+<th style="text-align:right;">
+RL05
+</th>
+<th style="text-align:right;">
+RL06
+</th>
+<th style="text-align:right;">
+RL07
+</th>
+<th style="text-align:right;">
+RL08
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+10.88
+</td>
+<td style="text-align:right;">
+2.19
+</td>
+<td style="text-align:right;">
+14.11
+</td>
+<td style="text-align:right;">
+1.24
+</td>
+<td style="text-align:right;">
+-3.04
+</td>
+<td style="text-align:right;">
+19.13
+</td>
+<td style="text-align:right;">
+24.36
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+8.81
+</td>
+<td style="text-align:right;">
+1.44
+</td>
+<td style="text-align:right;">
+11.05
+</td>
+<td style="text-align:right;">
+-2.38
+</td>
+<td style="text-align:right;">
+-13.71
+</td>
+<td style="text-align:right;">
+19.08
+</td>
+<td style="text-align:right;">
+12.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+7.08
+</td>
+<td style="text-align:right;">
+94.68
+</td>
+<td style="text-align:right;">
+96.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+23.48
+</td>
+<td style="text-align:right;">
+96.00
+</td>
+<td style="text-align:right;">
+97.86
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+1.97
+</td>
+<td style="text-align:right;">
+6.02
+</td>
+<td style="text-align:right;">
+17.04
+</td>
+<td style="text-align:right;">
+23.64
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+35.26
+</td>
+<td style="text-align:right;">
+41.81
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU2
+</td>
+<td style="text-align:right;">
+1.87
+</td>
+<td style="text-align:right;">
+5.28
+</td>
+<td style="text-align:right;">
+16.03
+</td>
+<td style="text-align:right;">
+24.95
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+35.98
+</td>
+<td style="text-align:right;">
+42.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+16.54
+</td>
+<td style="text-align:right;">
+23.88
+</td>
+<td style="text-align:right;">
+43.64
+</td>
+<td style="text-align:right;">
+44.34
+</td>
+<td style="text-align:right;">
+28.05
+</td>
+<td style="text-align:right;">
+74.08
+</td>
+<td style="text-align:right;">
+55.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+7.14
+</td>
+<td style="text-align:right;">
+3.57
+</td>
+<td style="text-align:right;">
+10.71
+</td>
+<td style="text-align:right;">
+25.00
+</td>
+<td style="text-align:right;">
+7.14
+</td>
+<td style="text-align:right;">
+46.43
+</td>
+<td style="text-align:right;">
+14.29
 </td>
 </tr>
 </tbody>

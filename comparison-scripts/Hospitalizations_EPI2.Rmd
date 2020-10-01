@@ -212,6 +212,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`)
+
+
 ```
 
 
@@ -259,6 +264,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
 
 ```
 
@@ -310,6 +320,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
+
 ```
 
 
@@ -358,6 +373,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
+
 ```
 
 
@@ -405,6 +425,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
 
 ```
 
@@ -455,6 +480,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
+
 ```
 
 
@@ -502,6 +532,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
 
 ```
 
@@ -553,6 +588,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
+
 ```
 
 ### HP22
@@ -601,6 +641,11 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
 
 ```
 
@@ -651,6 +696,10 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
 ```
 
 ### HP24
@@ -700,4 +749,9 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (HP13)`))
+
+write.csv(averted, "Hospitalizations_EPI2.csv")
 ```

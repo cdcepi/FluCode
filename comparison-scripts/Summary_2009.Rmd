@@ -197,6 +197,23 @@ knitr::kable(peak, digits = 2, caption = "Peak Magnitude Ill") %>%
 
 ```
 
+
+### % Reduction in Ill
+
+```{r ill_3, warning=FALSE, message = FALSE}
+
+r <- read.csv("./SympIllness_2009.csv")
+r$scenario <- sub("_", "", r$scenario)
+
+w <- spread(r[2:4], key = "scenario", value = "reduction")
+
+
+knitr::kable(w, digits = 2, caption = "% Reduction in Burden (RL01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+
 ### Cumulative Hosps
 ```{r hosp_1, warning=FALSE, message = FALSE}
 file.type = file.types[2]
@@ -288,6 +305,22 @@ knitr::kable(peak, digits = 2, caption = "Peak Hospitalizations per 100K") %>%
 ```
 
 
+### % Reduction in Hosps
+
+```{r hosp_3, warning=FALSE, message = FALSE}
+
+r <- read.csv("./Hospitalizations_2009.csv")
+r$scenario <- sub("_", "", r$scenario)
+
+w <- spread(r[2:4], key = "scenario", value = "reduction")
+
+
+knitr::kable(w, digits = 2, caption = "% Reduction in Burden (RL01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+
 ### Cumulative Deaths
 ```{r death_1, warning=FALSE, message = FALSE}
 file.type = file.types[3]
@@ -374,6 +407,22 @@ knitr::kable(cml, digits = 2, caption = "Cumulative Deaths per 100K") %>%
 ```{r death_2, warning=FALSE, message = FALSE}
 
 knitr::kable(peak, digits = 2, caption = "Peak Deaths per 100K") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+
+### % Reduction in Deaths
+
+```{r death_3, warning=FALSE, message = FALSE}
+
+r <- read.csv("./Deaths_2009.csv")
+r$scenario <- sub("_", "", r$scenario)
+
+w <- spread(r[2:4], key = "scenario", value = "reduction")
+
+
+knitr::kable(w, digits = 2, caption = "% Reduction in Burden (RL01)") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
 ```
