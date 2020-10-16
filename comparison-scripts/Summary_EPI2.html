@@ -11,7 +11,7 @@
 
 <meta name="author" content="Pragati Prasad" />
 
-<meta name="date" content="2020-10-01" />
+<meta name="date" content="2020-10-16" />
 
 <title>Summary of EPI2 Scenarios</title>
 
@@ -445,7 +445,7 @@ summary {
 
 <h1 class="title toc-ignore">Summary of EPI2 Scenarios</h1>
 <h4 class="author">Pragati Prasad</h4>
-<h4 class="date">2020-10-01</h4>
+<h4 class="date">2020-10-16</h4>
 
 </div>
 
@@ -495,6 +495,9 @@ read_ill &lt;- function(scn){
                                        s$Bin_cml %in% cols),],
                              `team` = team.abbrev[1]))
   
+  df_sub &lt;- select(symillness, contains(&quot;Week&quot;))
+  peak.week&lt;- c(team.abbrev[1], colnames(df_sub)[which.max(df_sub)])
+  
   for(i in 2:6){
     
     if(i == 4){
@@ -523,9 +526,11 @@ read_ill &lt;- function(scn){
       if(ncol(s) &gt; 58){
         s &lt;- s[-1]
       }
-      symillness &lt;- rbind.fill(symillness, 
-                               data.frame(c(s[which(s$Agegroup == &quot;Overall&quot; &amp; 
-                                                      s$Bin_cml %in% cols),],`team` = team.abbrev[i])))
+      u &lt;- data.frame(c(s[which(s$Agegroup == &quot;Overall&quot; &amp; 
+                                  s$Bin_cml %in% cols),],`team` = team.abbrev[i]))
+      symillness &lt;- rbind.fill(symillness, u)
+      df_sub &lt;- select(u, contains(&quot;Week&quot;))
+      peak.week &lt;- rbind(peak.week, c(team.abbrev[i], colnames(df_sub)[which.max(df_sub)]))
     }
     
   }
@@ -534,11 +539,13 @@ read_ill &lt;- function(scn){
   
   symillness$Bin[which(symillness$Bin_cml == &quot;Peak&quot;)] &lt;- &quot;sm.peak&quot;
   cml &lt;- symillness[c(&quot;Cml&quot;, &quot;team&quot;, &quot;Bin&quot;, &quot;Peak.Magnitude&quot;)]
-  
+  peak.week &lt;&lt;- as.data.frame(peak.week)
   return(cml)
 }
 
 tab_HP13 &lt;- read_ill(scn = &quot;HP13_&quot;)
+all.peak.weeks &lt;- data.frame(`HP13` = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2)))
+rownames(all.peak.weeks) &lt;- peak.week$V1
 
 # Cumulative % Ill
 cml &lt;- data.frame(`HP13` = tab_HP13$Cml)
@@ -551,6 +558,7 @@ rownames(peak) &lt;- tab_HP13$team
 
 scenario &lt;- &quot;HP14_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP14 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 cml$HP14 &lt;- long$Cml
@@ -560,6 +568,7 @@ peak$HP14 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP15_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP15 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 cml$HP15 &lt;- long$Cml
@@ -569,6 +578,7 @@ peak$HP15 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP16_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP16 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 cml$HP16 &lt;- long$Cml
@@ -579,6 +589,7 @@ peak$HP16 = long$Peak.Magnitude
 library(DataCombine)
 scenario &lt;- &quot;HP17_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP17 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -589,6 +600,7 @@ peak$HP17 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP18_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP18 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -599,6 +611,7 @@ peak$HP18 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP19_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP19 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -609,6 +622,7 @@ peak$HP19 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP20_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP20 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -619,6 +633,7 @@ peak$HP20 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP21_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP21 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -629,6 +644,7 @@ peak$HP21 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP22_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP22 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -639,6 +655,7 @@ peak$HP22 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP23_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP23 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 
@@ -649,6 +666,7 @@ peak$HP23 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP24_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP24 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
 # Cumulative % Ill
 cml$HP24 &lt;- long$Cml
@@ -716,40 +734,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-38.04
+31.80
 </td>
 <td style="text-align:right;">
-36.69
-</td>
-<td style="text-align:right;">
-38.01
-</td>
-<td style="text-align:right;">
-35.39
-</td>
-<td style="text-align:right;">
-35.54
-</td>
-<td style="text-align:right;">
-35.11
-</td>
-<td style="text-align:right;">
-35.07
-</td>
-<td style="text-align:right;">
-37.21
+30.68
 </td>
 <td style="text-align:right;">
 31.80
 </td>
 <td style="text-align:right;">
-30.42
+31.04
 </td>
 <td style="text-align:right;">
-34.08
+30.83
 </td>
 <td style="text-align:right;">
-33.95
+31.00
+</td>
+<td style="text-align:right;">
+30.78
+</td>
+<td style="text-align:right;">
+30.90
+</td>
+<td style="text-align:right;">
+28.47
+</td>
+<td style="text-align:right;">
+27.98
+</td>
+<td style="text-align:right;">
+30.04
+</td>
+<td style="text-align:right;">
+29.83
 </td>
 </tr>
 <tr>
@@ -798,40 +816,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-22.65
+44.85
 </td>
 <td style="text-align:right;">
-21.99
+40.80
 </td>
 <td style="text-align:right;">
-21.96
+45.44
 </td>
 <td style="text-align:right;">
-21.08
+41.59
 </td>
 <td style="text-align:right;">
-21.61
+42.29
 </td>
 <td style="text-align:right;">
-20.65
+38.83
 </td>
 <td style="text-align:right;">
-20.52
+39.21
 </td>
 <td style="text-align:right;">
-22.30
+43.69
 </td>
 <td style="text-align:right;">
-18.12
+29.88
 </td>
 <td style="text-align:right;">
-18.13
+25.07
 </td>
 <td style="text-align:right;">
-20.11
+38.30
 </td>
 <td style="text-align:right;">
-19.59
+37.05
 </td>
 </tr>
 <tr>
@@ -839,40 +857,40 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-29.00
+29.54
 </td>
 <td style="text-align:right;">
 29.00
 </td>
 <td style="text-align:right;">
-29.00
+29.54
 </td>
 <td style="text-align:right;">
-26.00
+26.28
 </td>
 <td style="text-align:right;">
-27.00
+27.13
 </td>
 <td style="text-align:right;">
 25.00
 </td>
 <td style="text-align:right;">
-25.00
+25.34
 </td>
 <td style="text-align:right;">
-29.00
+29.54
 </td>
 <td style="text-align:right;">
-23.00
+23.49
 </td>
 <td style="text-align:right;">
 21.00
 </td>
 <td style="text-align:right;">
-24.00
+24.90
 </td>
 <td style="text-align:right;">
-24.00
+24.41
 </td>
 </tr>
 <tr>
@@ -880,40 +898,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-46.95
+28.59
 </td>
 <td style="text-align:right;">
-46.95
+28.33
 </td>
 <td style="text-align:right;">
-46.95
+28.59
 </td>
 <td style="text-align:right;">
-43.68
+27.97
 </td>
 <td style="text-align:right;">
-46.95
+24.31
 </td>
 <td style="text-align:right;">
-43.68
+27.97
 </td>
 <td style="text-align:right;">
-46.95
+24.31
 </td>
 <td style="text-align:right;">
-34.29
+27.60
 </td>
 <td style="text-align:right;">
-31.43
+24.20
 </td>
 <td style="text-align:right;">
-34.10
+21.86
 </td>
 <td style="text-align:right;">
-31.43
+24.57
 </td>
 <td style="text-align:right;">
-34.10
+22.82
 </td>
 </tr>
 <tr>
@@ -921,40 +939,40 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-33.07
+33.31
 </td>
 <td style="text-align:right;">
-33.06
+33.31
 </td>
 <td style="text-align:right;">
-33.07
+33.31
 </td>
 <td style="text-align:right;">
-30.83
+30.40
 </td>
 <td style="text-align:right;">
-30.94
+30.49
 </td>
 <td style="text-align:right;">
-30.83
+30.39
 </td>
 <td style="text-align:right;">
-30.93
+30.48
 </td>
 <td style="text-align:right;">
-32.41
+32.82
 </td>
 <td style="text-align:right;">
-29.80
+29.59
 </td>
 <td style="text-align:right;">
-29.86
+29.64
 </td>
 <td style="text-align:right;">
-29.84
+29.63
 </td>
 <td style="text-align:right;">
-29.90
+29.69
 </td>
 </tr>
 </tbody>
@@ -1019,40 +1037,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-6.83
+3.65
 </td>
 <td style="text-align:right;">
-6.83
+3.65
 </td>
 <td style="text-align:right;">
-6.83
+3.65
 </td>
 <td style="text-align:right;">
-5.73
+3.58
 </td>
 <td style="text-align:right;">
-5.44
+3.40
 </td>
 <td style="text-align:right;">
-5.73
+3.58
 </td>
 <td style="text-align:right;">
-5.44
+3.40
 </td>
 <td style="text-align:right;">
-6.51
+3.46
 </td>
 <td style="text-align:right;">
-5.40
+3.38
 </td>
 <td style="text-align:right;">
-4.92
+3.21
 </td>
 <td style="text-align:right;">
-5.46
+3.38
 </td>
 <td style="text-align:right;">
-5.14
+3.21
 </td>
 </tr>
 <tr>
@@ -1101,40 +1119,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-4.34
+8.18
 </td>
 <td style="text-align:right;">
-4.28
+8.02
 </td>
 <td style="text-align:right;">
-4.14
+8.40
 </td>
 <td style="text-align:right;">
-2.78
+5.45
 </td>
 <td style="text-align:right;">
-2.99
+6.03
 </td>
 <td style="text-align:right;">
-2.80
+5.35
 </td>
 <td style="text-align:right;">
-2.92
+5.79
 </td>
 <td style="text-align:right;">
-4.09
+7.78
 </td>
 <td style="text-align:right;">
-2.59
+5.13
 </td>
 <td style="text-align:right;">
-2.85
+4.79
 </td>
 <td style="text-align:right;">
-2.59
+5.42
 </td>
 <td style="text-align:right;">
-2.78
+5.41
 </td>
 </tr>
 <tr>
@@ -1183,40 +1201,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 </tr>
 <tr>
@@ -1224,40 +1242,916 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-9.38
+10.25
 </td>
 <td style="text-align:right;">
-9.38
+10.25
 </td>
 <td style="text-align:right;">
-9.38
+10.25
 </td>
 <td style="text-align:right;">
-7.33
+7.41
 </td>
 <td style="text-align:right;">
-7.55
+7.65
 </td>
 <td style="text-align:right;">
-7.33
+7.41
 </td>
 <td style="text-align:right;">
-7.55
+7.65
 </td>
 <td style="text-align:right;">
-9.07
+10.02
 </td>
 <td style="text-align:right;">
-6.91
+7.07
 </td>
 <td style="text-align:right;">
-7.02
+7.21
 </td>
 <td style="text-align:right;">
-6.91
+7.07
 </td>
 <td style="text-align:right;">
-7.02
+7.21
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_reduction &lt;- data.frame(HP14 = (peak$HP13 - peak$HP14)/peak$HP13,
+                             HP15 = (peak$HP13 - peak$HP15)/peak$HP13,
+                             HP16 = (peak$HP13 - peak$HP16)/peak$HP13,
+                             HP17 = (peak$HP13 - peak$HP17)/peak$HP13,
+                             HP18 = (peak$HP13 - peak$HP18)/peak$HP13,
+                             HP19 = (peak$HP13 - peak$HP19)/peak$HP13,
+                             HP20 = (peak$HP13 - peak$HP20)/peak$HP13,
+                             HP21 = (peak$HP13 - peak$HP21)/peak$HP13,
+                             HP22 = (peak$HP13 - peak$HP22)/peak$HP13,
+                             HP23 = (peak$HP13 - peak$HP23)/peak$HP13,
+                             HP24 = (peak$HP13 - peak$HP24)/peak$HP13)
+rownames(peak_reduction) &lt;- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = &quot;% Reduction in Peak Magnitude Ill (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Peak Magnitude Ill (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.92
+</td>
+<td style="text-align:right;">
+6.88
+</td>
+<td style="text-align:right;">
+1.92
+</td>
+<td style="text-align:right;">
+6.88
+</td>
+<td style="text-align:right;">
+5.14
+</td>
+<td style="text-align:right;">
+7.43
+</td>
+<td style="text-align:right;">
+11.93
+</td>
+<td style="text-align:right;">
+7.43
+</td>
+<td style="text-align:right;">
+11.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+25.01
+</td>
+<td style="text-align:right;">
+32.01
+</td>
+<td style="text-align:right;">
+25.07
+</td>
+<td style="text-align:right;">
+31.95
+</td>
+<td style="text-align:right;">
+9.76
+</td>
+<td style="text-align:right;">
+38.72
+</td>
+<td style="text-align:right;">
+43.50
+</td>
+<td style="text-align:right;">
+38.68
+</td>
+<td style="text-align:right;">
+43.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+1.87
+</td>
+<td style="text-align:right;">
+-2.78
+</td>
+<td style="text-align:right;">
+33.37
+</td>
+<td style="text-align:right;">
+26.30
+</td>
+<td style="text-align:right;">
+34.60
+</td>
+<td style="text-align:right;">
+29.22
+</td>
+<td style="text-align:right;">
+4.87
+</td>
+<td style="text-align:right;">
+37.31
+</td>
+<td style="text-align:right;">
+41.43
+</td>
+<td style="text-align:right;">
+33.69
+</td>
+<td style="text-align:right;">
+33.78
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+46.24
+</td>
+<td style="text-align:right;">
+55.59
+</td>
+<td style="text-align:right;">
+46.24
+</td>
+<td style="text-align:right;">
+55.59
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+46.24
+</td>
+<td style="text-align:right;">
+55.59
+</td>
+<td style="text-align:right;">
+46.24
+</td>
+<td style="text-align:right;">
+55.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+27.69
+</td>
+<td style="text-align:right;">
+25.40
+</td>
+<td style="text-align:right;">
+27.69
+</td>
+<td style="text-align:right;">
+25.40
+</td>
+<td style="text-align:right;">
+2.23
+</td>
+<td style="text-align:right;">
+31.00
+</td>
+<td style="text-align:right;">
+29.66
+</td>
+<td style="text-align:right;">
+31.00
+</td>
+<td style="text-align:right;">
+29.66
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = &quot;Peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP13
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_delay &lt;- data.frame(HP14 = -(all.peak.weeks$HP13 - all.peak.weeks$HP14),
+                             HP15 = -(all.peak.weeks$HP13 - all.peak.weeks$HP15),
+                             HP16 = -(all.peak.weeks$HP13 - all.peak.weeks$HP16),
+                             HP17 = -(all.peak.weeks$HP13 - all.peak.weeks$HP17),
+                             HP18 = -(all.peak.weeks$HP13 - all.peak.weeks$HP18),
+                             HP19 = -(all.peak.weeks$HP13 - all.peak.weeks$HP19),
+                             HP20 = -(all.peak.weeks$HP13 - all.peak.weeks$HP20),
+                             HP21 = -(all.peak.weeks$HP13 - all.peak.weeks$HP21),
+                             HP22 = -(all.peak.weeks$HP13 - all.peak.weeks$HP22),
+                             HP23 = -(all.peak.weeks$HP13 - all.peak.weeks$HP23),
+                             HP24 = -(all.peak.weeks$HP13 - all.peak.weeks$HP24))
+rownames(peak_delay) &lt;- rownames(peak)
+
+knitr::kable(peak_delay, digits = 2, caption = &quot;Delay in peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Delay in peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-3
+</td>
+<td style="text-align:right;">
+-2
+</td>
+<td style="text-align:right;">
+-3
+</td>
+<td style="text-align:right;">
+-2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 </tbody>
@@ -1323,37 +2217,37 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-3.54
+3.53
 </td>
 <td style="text-align:right;">
-0.07
+0.00
 </td>
 <td style="text-align:right;">
-6.94
+2.39
 </td>
 <td style="text-align:right;">
-6.56
+3.06
 </td>
 <td style="text-align:right;">
-7.70
+2.51
 </td>
 <td style="text-align:right;">
-7.80
+3.21
 </td>
 <td style="text-align:right;">
-2.16
+2.84
 </td>
 <td style="text-align:right;">
-16.40
+10.48
 </td>
 <td style="text-align:right;">
-20.03
+12.00
 </td>
 <td style="text-align:right;">
-10.40
+5.52
 </td>
 <td style="text-align:right;">
-10.74
+6.20
 </td>
 </tr>
 <tr>
@@ -1361,37 +2255,37 @@ COL
 COL2
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-6.76
+8.74
 </td>
 <td style="text-align:right;">
-6.45
+8.47
 </td>
 <td style="text-align:right;">
-6.78
+8.77
 </td>
 <td style="text-align:right;">
-6.46
+8.50
 </td>
 <td style="text-align:right;">
-1.98
+1.48
 </td>
 <td style="text-align:right;">
-9.89
+11.19
 </td>
 <td style="text-align:right;">
-9.69
+11.02
 </td>
 <td style="text-align:right;">
-9.76
+11.06
 </td>
 <td style="text-align:right;">
-9.57
+10.89
 </td>
 </tr>
 <tr>
@@ -1399,37 +2293,37 @@ COL2
 IMP
 </td>
 <td style="text-align:right;">
-0.00
+0.92
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-6.98
+2.18
 </td>
 <td style="text-align:right;">
-0.00
+14.97
 </td>
 <td style="text-align:right;">
-6.98
+2.18
 </td>
 <td style="text-align:right;">
-0.00
+14.97
 </td>
 <td style="text-align:right;">
-26.98
+3.48
 </td>
 <td style="text-align:right;">
-33.07
+15.37
 </td>
 <td style="text-align:right;">
-27.38
+23.55
 </td>
 <td style="text-align:right;">
-33.07
+14.06
 </td>
 <td style="text-align:right;">
-27.38
+20.18
 </td>
 </tr>
 <tr>
@@ -1475,37 +2369,37 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-2.91
+9.03
 </td>
 <td style="text-align:right;">
-3.05
+-1.32
 </td>
 <td style="text-align:right;">
-6.93
+7.27
 </td>
 <td style="text-align:right;">
-4.59
+5.72
 </td>
 <td style="text-align:right;">
-8.84
+13.43
 </td>
 <td style="text-align:right;">
-9.38
+12.58
 </td>
 <td style="text-align:right;">
-1.54
+2.59
 </td>
 <td style="text-align:right;">
-19.99
+33.38
 </td>
 <td style="text-align:right;">
-19.95
+44.11
 </td>
 <td style="text-align:right;">
-11.21
+14.60
 </td>
 <td style="text-align:right;">
-13.53
+17.39
 </td>
 </tr>
 <tr>
@@ -1513,46 +2407,1572 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-0.00
+1.82
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-10.34
+11.03
 </td>
 <td style="text-align:right;">
-6.90
+8.15
 </td>
 <td style="text-align:right;">
-13.79
+15.36
 </td>
 <td style="text-align:right;">
-13.79
+14.22
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-20.69
+20.49
 </td>
 <td style="text-align:right;">
-27.59
+28.90
 </td>
 <td style="text-align:right;">
-17.24
+15.72
 </td>
 <td style="text-align:right;">
-17.24
+17.36
 </td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>t &lt;- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
+
+dt &lt;- as.data.frame(t)
+rownames(dt) &lt;- w$team
+colnames(dt) &lt;- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 1, caption = &quot;Rank Order of % Reduction in Burden (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Rank Order of % Reduction in Burden (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+10.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+4.5
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+4.5
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>a &lt;- read.csv(&quot;./SympIllness_age_EPI2.csv&quot;)
+a$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, a$scenario)
+
+w &lt;- spread(a[2:5], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+knitr::kable(w[2:13], digits = 2, caption = &quot;% Reduction in Burden by Age (HP01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+  pack_rows(index = table(w$team))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden by Age (HP01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+agegroup
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+4.76
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.81
+</td>
+<td style="text-align:right;">
+4.40
+</td>
+<td style="text-align:right;">
+2.91
+</td>
+<td style="text-align:right;">
+4.53
+</td>
+<td style="text-align:right;">
+4.64
+</td>
+<td style="text-align:right;">
+13.96
+</td>
+<td style="text-align:right;">
+16.62
+</td>
+<td style="text-align:right;">
+7.77
+</td>
+<td style="text-align:right;">
+9.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.24
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.40
+</td>
+<td style="text-align:right;">
+1.35
+</td>
+<td style="text-align:right;">
+1.51
+</td>
+<td style="text-align:right;">
+2.25
+</td>
+<td style="text-align:right;">
+8.50
+</td>
+<td style="text-align:right;">
+9.49
+</td>
+<td style="text-align:right;">
+3.75
+</td>
+<td style="text-align:right;">
+3.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+4.23
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+9.64
+</td>
+<td style="text-align:right;">
+13.40
+</td>
+<td style="text-align:right;">
+10.02
+</td>
+<td style="text-align:right;">
+13.87
+</td>
+<td style="text-align:right;">
+3.72
+</td>
+<td style="text-align:right;">
+19.22
+</td>
+<td style="text-align:right;">
+23.69
+</td>
+<td style="text-align:right;">
+14.06
+</td>
+<td style="text-align:right;">
+17.66
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.95
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.24
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.31
+</td>
+<td style="text-align:right;">
+1.36
+</td>
+<td style="text-align:right;">
+3.32
+</td>
+<td style="text-align:right;">
+10.22
+</td>
+<td style="text-align:right;">
+11.21
+</td>
+<td style="text-align:right;">
+4.75
+</td>
+<td style="text-align:right;">
+4.83
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.89
+</td>
+<td style="text-align:right;">
+4.41
+</td>
+<td style="text-align:right;">
+3.02
+</td>
+<td style="text-align:right;">
+4.58
+</td>
+<td style="text-align:right;">
+5.25
+</td>
+<td style="text-align:right;">
+12.32
+</td>
+<td style="text-align:right;">
+14.54
+</td>
+<td style="text-align:right;">
+8.42
+</td>
+<td style="text-align:right;">
+9.95
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL2</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+27.16
+</td>
+<td style="text-align:right;">
+26.29
+</td>
+<td style="text-align:right;">
+27.27
+</td>
+<td style="text-align:right;">
+26.40
+</td>
+<td style="text-align:right;">
+1.55
+</td>
+<td style="text-align:right;">
+29.77
+</td>
+<td style="text-align:right;">
+29.25
+</td>
+<td style="text-align:right;">
+29.56
+</td>
+<td style="text-align:right;">
+29.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+3.74
+</td>
+<td style="text-align:right;">
+3.82
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:right;">
+1.47
+</td>
+<td style="text-align:right;">
+6.15
+</td>
+<td style="text-align:right;">
+6.09
+</td>
+<td style="text-align:right;">
+6.04
+</td>
+<td style="text-align:right;">
+5.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.78
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+12.82
+</td>
+<td style="text-align:right;">
+12.30
+</td>
+<td style="text-align:right;">
+0.83
+</td>
+<td style="text-align:right;">
+14.64
+</td>
+<td style="text-align:right;">
+14.31
+</td>
+<td style="text-align:right;">
+14.49
+</td>
+<td style="text-align:right;">
+14.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.10
+</td>
+<td style="text-align:right;">
+8.33
+</td>
+<td style="text-align:right;">
+8.14
+</td>
+<td style="text-align:right;">
+2.40
+</td>
+<td style="text-align:right;">
+11.88
+</td>
+<td style="text-align:right;">
+11.76
+</td>
+<td style="text-align:right;">
+11.72
+</td>
+<td style="text-align:right;">
+11.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.21
+</td>
+<td style="text-align:right;">
+11.89
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+11.94
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+16.22
+</td>
+<td style="text-align:right;">
+16.02
+</td>
+<td style="text-align:right;">
+16.05
+</td>
+<td style="text-align:right;">
+15.85
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>IMP</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+7.10
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+6.20
+</td>
+<td style="text-align:right;">
+9.26
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+1.07
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+3.30
+</td>
+<td style="text-align:right;">
+16.26
+</td>
+<td style="text-align:right;">
+25.32
+</td>
+<td style="text-align:right;">
+14.73
+</td>
+<td style="text-align:right;">
+21.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:right;">
+23.09
+</td>
+<td style="text-align:right;">
+35.12
+</td>
+<td style="text-align:right;">
+21.48
+</td>
+<td style="text-align:right;">
+31.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+3.93
+</td>
+<td style="text-align:right;">
+12.24
+</td>
+<td style="text-align:right;">
+18.63
+</td>
+<td style="text-align:right;">
+11.13
+</td>
+<td style="text-align:right;">
+15.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+5.57
+</td>
+<td style="text-align:right;">
+10.73
+</td>
+<td style="text-align:right;">
+14.89
+</td>
+<td style="text-align:right;">
+10.06
+</td>
+<td style="text-align:right;">
+13.11
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>NEU</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+17.43
+</td>
+<td style="text-align:right;">
+18.56
+</td>
+<td style="text-align:right;">
+17.07
+</td>
+<td style="text-align:right;">
+17.35
+</td>
+<td style="text-align:right;">
+7.69
+</td>
+<td style="text-align:right;">
+26.48
+</td>
+<td style="text-align:right;">
+30.67
+</td>
+<td style="text-align:right;">
+24.93
+</td>
+<td style="text-align:right;">
+25.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+10.93
+</td>
+<td style="text-align:right;">
+11.74
+</td>
+<td style="text-align:right;">
+10.61
+</td>
+<td style="text-align:right;">
+10.60
+</td>
+<td style="text-align:right;">
+5.99
+</td>
+<td style="text-align:right;">
+18.95
+</td>
+<td style="text-align:right;">
+22.89
+</td>
+<td style="text-align:right;">
+17.43
+</td>
+<td style="text-align:right;">
+17.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+26.27
+</td>
+<td style="text-align:right;">
+28.49
+</td>
+<td style="text-align:right;">
+25.88
+</td>
+<td style="text-align:right;">
+27.15
+</td>
+<td style="text-align:right;">
+5.75
+</td>
+<td style="text-align:right;">
+33.92
+</td>
+<td style="text-align:right;">
+39.35
+</td>
+<td style="text-align:right;">
+32.26
+</td>
+<td style="text-align:right;">
+33.74
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.57
+</td>
+<td style="text-align:right;">
+9.09
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.12
+</td>
+<td style="text-align:right;">
+6.43
+</td>
+<td style="text-align:right;">
+16.92
+</td>
+<td style="text-align:right;">
+20.22
+</td>
+<td style="text-align:right;">
+15.60
+</td>
+<td style="text-align:right;">
+15.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+10.32
+</td>
+<td style="text-align:right;">
+10.72
+</td>
+<td style="text-align:right;">
+10.06
+</td>
+<td style="text-align:right;">
+9.80
+</td>
+<td style="text-align:right;">
+8.50
+</td>
+<td style="text-align:right;">
+20.40
+</td>
+<td style="text-align:right;">
+23.40
+</td>
+<td style="text-align:right;">
+19.18
+</td>
+<td style="text-align:right;">
+19.04
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UTA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+7.36
+</td>
+<td style="text-align:right;">
+-1.44
+</td>
+<td style="text-align:right;">
+6.74
+</td>
+<td style="text-align:right;">
+5.18
+</td>
+<td style="text-align:right;">
+12.51
+</td>
+<td style="text-align:right;">
+11.46
+</td>
+<td style="text-align:right;">
+2.98
+</td>
+<td style="text-align:right;">
+29.47
+</td>
+<td style="text-align:right;">
+37.55
+</td>
+<td style="text-align:right;">
+13.79
+</td>
+<td style="text-align:right;">
+16.31
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+9.09
+</td>
+<td style="text-align:right;">
+-1.22
+</td>
+<td style="text-align:right;">
+7.45
+</td>
+<td style="text-align:right;">
+5.96
+</td>
+<td style="text-align:right;">
+13.69
+</td>
+<td style="text-align:right;">
+12.95
+</td>
+<td style="text-align:right;">
+2.23
+</td>
+<td style="text-align:right;">
+33.74
+</td>
+<td style="text-align:right;">
+45.18
+</td>
+<td style="text-align:right;">
+14.70
+</td>
+<td style="text-align:right;">
+17.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+7.75
+</td>
+<td style="text-align:right;">
+-1.20
+</td>
+<td style="text-align:right;">
+7.38
+</td>
+<td style="text-align:right;">
+5.75
+</td>
+<td style="text-align:right;">
+13.54
+</td>
+<td style="text-align:right;">
+12.61
+</td>
+<td style="text-align:right;">
+2.18
+</td>
+<td style="text-align:right;">
+30.38
+</td>
+<td style="text-align:right;">
+38.38
+</td>
+<td style="text-align:right;">
+14.41
+</td>
+<td style="text-align:right;">
+16.80
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+8.67
+</td>
+<td style="text-align:right;">
+-1.25
+</td>
+<td style="text-align:right;">
+7.06
+</td>
+<td style="text-align:right;">
+5.69
+</td>
+<td style="text-align:right;">
+13.09
+</td>
+<td style="text-align:right;">
+12.35
+</td>
+<td style="text-align:right;">
+2.30
+</td>
+<td style="text-align:right;">
+32.48
+</td>
+<td style="text-align:right;">
+43.62
+</td>
+<td style="text-align:right;">
+14.16
+</td>
+<td style="text-align:right;">
+17.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+15.05
+</td>
+<td style="text-align:right;">
+-2.59
+</td>
+<td style="text-align:right;">
+6.79
+</td>
+<td style="text-align:right;">
+4.31
+</td>
+<td style="text-align:right;">
+12.98
+</td>
+<td style="text-align:right;">
+11.35
+</td>
+<td style="text-align:right;">
+7.16
+</td>
+<td style="text-align:right;">
+46.07
+</td>
+<td style="text-align:right;">
+60.55
+</td>
+<td style="text-align:right;">
+16.54
+</td>
+<td style="text-align:right;">
+20.43
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UVA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+4.16
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+19.44
+</td>
+<td style="text-align:right;">
+15.56
+</td>
+<td style="text-align:right;">
+27.16
+</td>
+<td style="text-align:right;">
+23.42
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+30.33
+</td>
+<td style="text-align:right;">
+38.66
+</td>
+<td style="text-align:right;">
+24.66
+</td>
+<td style="text-align:right;">
+26.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+5.60
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+10.22
+</td>
+<td style="text-align:right;">
+7.79
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+13.72
+</td>
+<td style="text-align:right;">
+23.52
+</td>
+<td style="text-align:right;">
+9.02
+</td>
+<td style="text-align:right;">
+10.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+1.08
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+18.64
+</td>
+<td style="text-align:right;">
+14.08
+</td>
+<td style="text-align:right;">
+24.82
+</td>
+<td style="text-align:right;">
+23.40
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+30.19
+</td>
+<td style="text-align:right;">
+36.69
+</td>
+<td style="text-align:right;">
+25.44
+</td>
+<td style="text-align:right;">
+27.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+1.17
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.22
+</td>
+<td style="text-align:right;">
+5.94
+</td>
+<td style="text-align:right;">
+12.58
+</td>
+<td style="text-align:right;">
+10.83
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+16.93
+</td>
+<td style="text-align:right;">
+23.98
+</td>
+<td style="text-align:right;">
+12.18
+</td>
+<td style="text-align:right;">
+13.62
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+10.45
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+8.67
+</td>
+<td style="text-align:right;">
+20.40
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+20.73
+</td>
+<td style="text-align:right;">
+30.35
+</td>
+<td style="text-align:right;">
+16.11
+</td>
+<td style="text-align:right;">
+17.62
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># t &lt;- as.data.frame(t(w[,2:12]))
+# colnames(t) &lt;- w$team
+# t$mean &lt;- rowMeans(t)
+# t$team &lt;- rownames(t)
+# 
+# o &lt;- arrange(t, mean)
+# rownames(o) &lt;- o$team
+# 
+# ot &lt;- as.data.frame(t(o[,1:7]))
+# 
+# knitr::kable(ot[7,], digits = 2, caption = &quot;Rank ordered Mean % Reduction in Burden (HP13)&quot;) %&gt;%
+#   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 </div>
 <div id="cumulative-hosps" class="section level3">
 <h3>Cumulative Hosps</h3>
 <pre class="r"><code>file.type = file.types[2]
 tab_HP13 &lt;- read_ill(scn = &quot;HP13_&quot;)
+all.peak.weeks &lt;- data.frame(`HP13` = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2)))
+rownames(all.peak.weeks) &lt;- peak.week$V1
 
 # Cumulative Hosps
 cml &lt;- data.frame(`HP13` = tab_HP13$Cml)
@@ -1565,8 +3985,9 @@ rownames(peak) &lt;- tab_HP13$team
 
 scenario &lt;- &quot;HP14_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP14 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP14 &lt;- long$Cml
 
 # Peak Magnitude
@@ -1574,8 +3995,9 @@ peak$HP14 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP15_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP15 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP15 &lt;- long$Cml
 
 # Peak Magnitude
@@ -1583,17 +4005,21 @@ peak$HP15 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP16_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP16 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP16 &lt;- long$Cml
 
 # Peak Magnitude
 peak$HP16 = long$Peak.Magnitude
 
+library(DataCombine)
 scenario &lt;- &quot;HP17_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP17 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
+
 cml$HP17 &lt;- long$Cml
 
 # Peak Magnitude
@@ -1601,8 +4027,9 @@ peak$HP17 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP18_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP18 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP18 &lt;- long$Cml
 
@@ -1611,8 +4038,9 @@ peak$HP18 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP19_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP19 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP19 &lt;- long$Cml
 
@@ -1621,8 +4049,9 @@ peak$HP19 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP20_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP20 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP20 &lt;- long$Cml
 
@@ -1631,8 +4060,9 @@ peak$HP20 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP21_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP21 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP21 &lt;- long$Cml
 
@@ -1641,8 +4071,9 @@ peak$HP21 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP22_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP22 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP22 &lt;- long$Cml
 
@@ -1651,8 +4082,9 @@ peak$HP22 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP23_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP23 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 
 cml$HP23 &lt;- long$Cml
 
@@ -1661,16 +4093,16 @@ peak$HP23 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP24_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP24 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
-
+# Cumulative Hosps
 cml$HP24 &lt;- long$Cml
 
 # Peak Magnitude
 peak$HP24 = long$Peak.Magnitude
 
-cml &lt;- cml %&gt;% convert(num(c(HP17, HP18, HP19, HP20, HP21, HP22, HP23, HP24)))
-rownames(cml) &lt;- tab_HP13$team
+# cml &lt;- cml %&gt;% convert(num(c(HP17, HP18, HP19, HP20, HP21, HP22, HP23, HP24)))
+# rownames(cml) &lt;- tab_HP13$team
 
 knitr::kable(cml, digits = 2, caption = &quot;Cumulative Hospitalizations per 100K&quot;) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
@@ -1726,40 +4158,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-653.98
+501.63
 </td>
 <td style="text-align:right;">
-630.20
+484.49
 </td>
 <td style="text-align:right;">
-653.52
+501.63
 </td>
 <td style="text-align:right;">
-611.68
+491.48
 </td>
 <td style="text-align:right;">
-614.55
+488.35
 </td>
 <td style="text-align:right;">
-607.01
+490.95
 </td>
 <td style="text-align:right;">
-606.95
+487.70
 </td>
 <td style="text-align:right;">
-635.71
+484.80
 </td>
 <td style="text-align:right;">
-545.92
+449.22
 </td>
 <td style="text-align:right;">
-521.95
+441.87
 </td>
 <td style="text-align:right;">
-585.76
+473.37
 </td>
 <td style="text-align:right;">
-584.08
+470.10
 </td>
 </tr>
 <tr>
@@ -1808,40 +4240,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-426.22
+832.85
 </td>
 <td style="text-align:right;">
-408.74
+732.89
 </td>
 <td style="text-align:right;">
-412.60
+846.47
 </td>
 <td style="text-align:right;">
-400.24
+774.21
 </td>
 <td style="text-align:right;">
-411.12
+789.06
 </td>
 <td style="text-align:right;">
-391.93
+722.89
 </td>
 <td style="text-align:right;">
-389.91
+731.59
 </td>
 <td style="text-align:right;">
-289.20
+559.06
 </td>
 <td style="text-align:right;">
-228.22
+353.32
 </td>
 <td style="text-align:right;">
-227.49
+278.03
 </td>
 <td style="text-align:right;">
-262.94
+493.45
 </td>
 <td style="text-align:right;">
-256.06
+475.51
 </td>
 </tr>
 <tr>
@@ -1849,40 +4281,40 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-187.00
+187.81
 </td>
 <td style="text-align:right;">
 186.00
 </td>
 <td style="text-align:right;">
-187.00
+187.81
 </td>
 <td style="text-align:right;">
-169.00
+169.82
 </td>
 <td style="text-align:right;">
-174.00
+174.62
 </td>
 <td style="text-align:right;">
 163.00
 </td>
 <td style="text-align:right;">
-164.00
+164.41
 </td>
 <td style="text-align:right;">
-161.00
+161.30
 </td>
 <td style="text-align:right;">
-131.00
+131.14
 </td>
 <td style="text-align:right;">
 120.00
 </td>
 <td style="text-align:right;">
-138.00
+138.82
 </td>
 <td style="text-align:right;">
-136.00
+136.32
 </td>
 </tr>
 <tr>
@@ -1890,40 +4322,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-978.51
+594.73
 </td>
 <td style="text-align:right;">
-978.51
+590.17
 </td>
 <td style="text-align:right;">
-978.51
+594.72
 </td>
 <td style="text-align:right;">
-926.21
+584.59
 </td>
 <td style="text-align:right;">
-978.48
+523.98
 </td>
 <td style="text-align:right;">
-926.21
+584.59
 </td>
 <td style="text-align:right;">
-978.48
+523.98
 </td>
 <td style="text-align:right;">
-688.76
+571.76
 </td>
 <td style="text-align:right;">
-640.18
+514.99
 </td>
 <td style="text-align:right;">
-685.48
+474.25
 </td>
 <td style="text-align:right;">
-640.18
+521.70
 </td>
 <td style="text-align:right;">
-685.48
+491.64
 </td>
 </tr>
 <tr>
@@ -1931,40 +4363,40 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-623.43
+474.82
 </td>
 <td style="text-align:right;">
-623.23
+474.70
 </td>
 <td style="text-align:right;">
-623.43
+474.82
 </td>
 <td style="text-align:right;">
-587.54
+430.79
 </td>
 <td style="text-align:right;">
-589.01
+431.99
 </td>
 <td style="text-align:right;">
-587.46
+430.60
 </td>
 <td style="text-align:right;">
-588.94
+431.81
 </td>
 <td style="text-align:right;">
-607.90
+465.79
 </td>
 <td style="text-align:right;">
-564.19
+416.80
 </td>
 <td style="text-align:right;">
-565.16
+417.57
 </td>
 <td style="text-align:right;">
-565.01
+417.47
 </td>
 <td style="text-align:right;">
-565.92
+418.24
 </td>
 </tr>
 </tbody>
@@ -2029,40 +4461,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-114.33
+58.01
 </td>
 <td style="text-align:right;">
-114.19
+58.01
 </td>
 <td style="text-align:right;">
-114.33
+58.01
 </td>
 <td style="text-align:right;">
-97.04
+57.24
 </td>
 <td style="text-align:right;">
-92.30
+54.50
 </td>
 <td style="text-align:right;">
-97.04
+57.24
 </td>
 <td style="text-align:right;">
-92.30
+54.50
 </td>
 <td style="text-align:right;">
-108.54
+54.72
 </td>
 <td style="text-align:right;">
-90.93
+53.82
 </td>
 <td style="text-align:right;">
-83.19
+51.30
 </td>
 <td style="text-align:right;">
-91.95
+53.82
 </td>
 <td style="text-align:right;">
-86.90
+51.30
 </td>
 </tr>
 <tr>
@@ -2111,40 +4543,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-79.66
+149.59
 </td>
 <td style="text-align:right;">
-78.51
+146.66
 </td>
 <td style="text-align:right;">
-76.44
+154.06
 </td>
 <td style="text-align:right;">
-52.65
+101.52
 </td>
 <td style="text-align:right;">
-56.60
+112.07
 </td>
 <td style="text-align:right;">
-53.00
+99.61
 </td>
 <td style="text-align:right;">
-55.11
+107.71
 </td>
 <td style="text-align:right;">
-52.15
+98.12
 </td>
 <td style="text-align:right;">
-33.86
+64.72
 </td>
 <td style="text-align:right;">
-37.17
+55.93
 </td>
 <td style="text-align:right;">
-34.09
+70.10
 </td>
 <td style="text-align:right;">
-36.33
+69.73
 </td>
 </tr>
 <tr>
@@ -2152,37 +4584,37 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-43.95
+43.73
 </td>
 <td style="text-align:right;">
-43.76
+43.92
 </td>
 <td style="text-align:right;">
-43.95
+44.12
 </td>
 <td style="text-align:right;">
-23.56
+23.59
+</td>
+<td style="text-align:right;">
+19.58
+</td>
+<td style="text-align:right;">
+23.59
 </td>
 <td style="text-align:right;">
 19.57
 </td>
 <td style="text-align:right;">
-23.56
+37.57
 </td>
 <td style="text-align:right;">
-19.57
-</td>
-<td style="text-align:right;">
-37.59
-</td>
-<td style="text-align:right;">
-20.25
+20.24
 </td>
 <td style="text-align:right;">
 16.79
 </td>
 <td style="text-align:right;">
-20.25
+20.20
 </td>
 <td style="text-align:right;">
 16.79
@@ -2193,40 +4625,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 </tr>
 <tr>
@@ -2234,40 +4666,916 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-171.26
+141.30
 </td>
 <td style="text-align:right;">
-171.26
+141.30
 </td>
 <td style="text-align:right;">
-171.26
+141.30
 </td>
 <td style="text-align:right;">
-137.15
+102.13
 </td>
 <td style="text-align:right;">
-141.07
+105.36
 </td>
 <td style="text-align:right;">
-137.15
+102.13
 </td>
 <td style="text-align:right;">
-141.07
+105.36
 </td>
 <td style="text-align:right;">
-165.46
+137.36
 </td>
 <td style="text-align:right;">
-128.70
+97.24
 </td>
 <td style="text-align:right;">
-130.63
+99.05
 </td>
 <td style="text-align:right;">
-128.70
+97.24
 </td>
 <td style="text-align:right;">
-130.63
+99.05
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_reduction &lt;- data.frame(HP14 = (peak$HP13 - peak$HP14)/peak$HP13,
+                             HP15 = (peak$HP13 - peak$HP15)/peak$HP13,
+                             HP16 = (peak$HP13 - peak$HP16)/peak$HP13,
+                             HP17 = (peak$HP13 - peak$HP17)/peak$HP13,
+                             HP18 = (peak$HP13 - peak$HP18)/peak$HP13,
+                             HP19 = (peak$HP13 - peak$HP19)/peak$HP13,
+                             HP20 = (peak$HP13 - peak$HP20)/peak$HP13,
+                             HP21 = (peak$HP13 - peak$HP21)/peak$HP13,
+                             HP22 = (peak$HP13 - peak$HP22)/peak$HP13,
+                             HP23 = (peak$HP13 - peak$HP23)/peak$HP13,
+                             HP24 = (peak$HP13 - peak$HP24)/peak$HP13)
+rownames(peak_reduction) &lt;- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = &quot;% Reduction in Peak Hospitalizations per 100K (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Peak Hospitalizations per 100K (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+<td style="text-align:right;">
+6.04
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+<td style="text-align:right;">
+6.04
+</td>
+<td style="text-align:right;">
+5.67
+</td>
+<td style="text-align:right;">
+7.22
+</td>
+<td style="text-align:right;">
+11.57
+</td>
+<td style="text-align:right;">
+7.22
+</td>
+<td style="text-align:right;">
+11.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+21.13
+</td>
+<td style="text-align:right;">
+28.91
+</td>
+<td style="text-align:right;">
+21.14
+</td>
+<td style="text-align:right;">
+28.85
+</td>
+<td style="text-align:right;">
+11.02
+</td>
+<td style="text-align:right;">
+36.15
+</td>
+<td style="text-align:right;">
+40.93
+</td>
+<td style="text-align:right;">
+36.12
+</td>
+<td style="text-align:right;">
+40.89
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+1.96
+</td>
+<td style="text-align:right;">
+-2.99
+</td>
+<td style="text-align:right;">
+32.13
+</td>
+<td style="text-align:right;">
+25.08
+</td>
+<td style="text-align:right;">
+33.42
+</td>
+<td style="text-align:right;">
+28.00
+</td>
+<td style="text-align:right;">
+34.41
+</td>
+<td style="text-align:right;">
+56.74
+</td>
+<td style="text-align:right;">
+62.61
+</td>
+<td style="text-align:right;">
+53.14
+</td>
+<td style="text-align:right;">
+53.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+-0.42
+</td>
+<td style="text-align:right;">
+-0.89
+</td>
+<td style="text-align:right;">
+46.05
+</td>
+<td style="text-align:right;">
+55.23
+</td>
+<td style="text-align:right;">
+46.05
+</td>
+<td style="text-align:right;">
+55.24
+</td>
+<td style="text-align:right;">
+14.08
+</td>
+<td style="text-align:right;">
+53.72
+</td>
+<td style="text-align:right;">
+61.60
+</td>
+<td style="text-align:right;">
+53.81
+</td>
+<td style="text-align:right;">
+61.60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+27.72
+</td>
+<td style="text-align:right;">
+25.43
+</td>
+<td style="text-align:right;">
+27.72
+</td>
+<td style="text-align:right;">
+25.43
+</td>
+<td style="text-align:right;">
+2.78
+</td>
+<td style="text-align:right;">
+31.18
+</td>
+<td style="text-align:right;">
+29.90
+</td>
+<td style="text-align:right;">
+31.18
+</td>
+<td style="text-align:right;">
+29.90
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = &quot;Peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP13
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_delay &lt;- data.frame(HP14 = -(all.peak.weeks$HP13 - all.peak.weeks$HP14),
+                             HP15 = -(all.peak.weeks$HP13 - all.peak.weeks$HP15),
+                             HP16 = -(all.peak.weeks$HP13 - all.peak.weeks$HP16),
+                             HP17 = -(all.peak.weeks$HP13 - all.peak.weeks$HP17),
+                             HP18 = -(all.peak.weeks$HP13 - all.peak.weeks$HP18),
+                             HP19 = -(all.peak.weeks$HP13 - all.peak.weeks$HP19),
+                             HP20 = -(all.peak.weeks$HP13 - all.peak.weeks$HP20),
+                             HP21 = -(all.peak.weeks$HP13 - all.peak.weeks$HP21),
+                             HP22 = -(all.peak.weeks$HP13 - all.peak.weeks$HP22),
+                             HP23 = -(all.peak.weeks$HP13 - all.peak.weeks$HP23),
+                             HP24 = -(all.peak.weeks$HP13 - all.peak.weeks$HP24))
+rownames(peak_delay) &lt;- rownames(peak)
+
+knitr::kable(peak_delay, digits = 2, caption = &quot;Delay in peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Delay in peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 </tbody>
@@ -2333,37 +5641,37 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-3.64
+3.42
 </td>
 <td style="text-align:right;">
-0.07
+0.00
 </td>
 <td style="text-align:right;">
-6.47
+2.02
 </td>
 <td style="text-align:right;">
-6.03
+2.65
 </td>
 <td style="text-align:right;">
-7.18
+2.13
 </td>
 <td style="text-align:right;">
-7.19
+2.78
 </td>
 <td style="text-align:right;">
-2.79
+3.35
 </td>
 <td style="text-align:right;">
-16.52
+10.45
 </td>
 <td style="text-align:right;">
-20.19
+11.91
 </td>
 <td style="text-align:right;">
-10.43
+5.63
 </td>
 <td style="text-align:right;">
-10.69
+6.28
 </td>
 </tr>
 <tr>
@@ -2377,31 +5685,31 @@ COL2
 0.00
 </td>
 <td style="text-align:right;">
-5.76
+9.27
 </td>
 <td style="text-align:right;">
-5.52
+9.02
 </td>
 <td style="text-align:right;">
-5.77
+9.31
 </td>
 <td style="text-align:right;">
-5.53
+9.06
 </td>
 <td style="text-align:right;">
-2.49
+1.90
 </td>
 <td style="text-align:right;">
-9.50
+12.22
 </td>
 <td style="text-align:right;">
-9.35
+12.06
 </td>
 <td style="text-align:right;">
-9.37
+12.08
 </td>
 <td style="text-align:right;">
-9.22
+11.92
 </td>
 </tr>
 <tr>
@@ -2409,37 +5717,37 @@ COL2
 IMP
 </td>
 <td style="text-align:right;">
-0.00
+0.77
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-5.34
+1.70
 </td>
 <td style="text-align:right;">
-0.00
+11.90
 </td>
 <td style="text-align:right;">
-5.34
+1.70
 </td>
 <td style="text-align:right;">
-0.00
+11.90
 </td>
 <td style="text-align:right;">
-29.61
+3.86
 </td>
 <td style="text-align:right;">
-34.58
+13.41
 </td>
 <td style="text-align:right;">
-29.95
+20.26
 </td>
 <td style="text-align:right;">
-34.58
+12.28
 </td>
 <td style="text-align:right;">
-29.95
+17.33
 </td>
 </tr>
 <tr>
@@ -2485,37 +5793,37 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-4.10
+12.00
 </td>
 <td style="text-align:right;">
-3.20
+-1.64
 </td>
 <td style="text-align:right;">
-6.10
+7.04
 </td>
 <td style="text-align:right;">
-3.54
+5.26
 </td>
 <td style="text-align:right;">
-8.05
+13.20
 </td>
 <td style="text-align:right;">
-8.52
+12.16
 </td>
 <td style="text-align:right;">
-32.15
+32.87
 </td>
 <td style="text-align:right;">
-46.46
+57.58
 </td>
 <td style="text-align:right;">
-46.63
+66.62
 </td>
 <td style="text-align:right;">
-38.31
+40.75
 </td>
 <td style="text-align:right;">
-39.92
+42.91
 </td>
 </tr>
 <tr>
@@ -2523,48 +5831,1574 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-0.53
+0.97
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-9.63
+9.58
 </td>
 <td style="text-align:right;">
-6.95
+7.03
 </td>
 <td style="text-align:right;">
-12.83
+13.21
+</td>
+<td style="text-align:right;">
+12.46
+</td>
+<td style="text-align:right;">
+14.12
+</td>
+<td style="text-align:right;">
+30.17
+</td>
+<td style="text-align:right;">
+36.11
+</td>
+<td style="text-align:right;">
+26.08
+</td>
+<td style="text-align:right;">
+27.42
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>t &lt;- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
+
+dt &lt;- as.data.frame(t)
+rownames(dt) &lt;- w$team
+colnames(dt) &lt;- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 1, caption = &quot;Rank Order of % Reduction in Burden (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Rank Order of % Reduction in Burden (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+10.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+5.5
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+5.5
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+10.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>a &lt;- read.csv(&quot;./Hospitalizations_age_EPI2.csv&quot;)
+a$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, a$scenario)
+
+w &lt;- spread(a[2:5], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+knitr::kable(w[2:13], digits = 2, caption = &quot;% Reduction in Burden by Age (HP01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+  pack_rows(index = table(w$team))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden by Age (HP01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+agegroup
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+4.76
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.81
+</td>
+<td style="text-align:right;">
+4.40
+</td>
+<td style="text-align:right;">
+2.91
+</td>
+<td style="text-align:right;">
+4.53
+</td>
+<td style="text-align:right;">
+4.64
+</td>
+<td style="text-align:right;">
+13.96
+</td>
+<td style="text-align:right;">
+16.62
+</td>
+<td style="text-align:right;">
+7.77
+</td>
+<td style="text-align:right;">
+9.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.24
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.40
+</td>
+<td style="text-align:right;">
+1.35
+</td>
+<td style="text-align:right;">
+1.51
+</td>
+<td style="text-align:right;">
+2.25
+</td>
+<td style="text-align:right;">
+8.50
+</td>
+<td style="text-align:right;">
+9.49
+</td>
+<td style="text-align:right;">
+3.75
+</td>
+<td style="text-align:right;">
+3.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+4.23
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+9.64
+</td>
+<td style="text-align:right;">
+13.40
+</td>
+<td style="text-align:right;">
+10.02
+</td>
+<td style="text-align:right;">
+13.87
+</td>
+<td style="text-align:right;">
+3.72
+</td>
+<td style="text-align:right;">
+19.22
+</td>
+<td style="text-align:right;">
+23.69
+</td>
+<td style="text-align:right;">
+14.06
+</td>
+<td style="text-align:right;">
+17.66
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.95
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.24
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.31
+</td>
+<td style="text-align:right;">
+1.36
+</td>
+<td style="text-align:right;">
+3.32
+</td>
+<td style="text-align:right;">
+10.22
+</td>
+<td style="text-align:right;">
+11.21
+</td>
+<td style="text-align:right;">
+4.75
+</td>
+<td style="text-align:right;">
+4.83
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.89
+</td>
+<td style="text-align:right;">
+4.41
+</td>
+<td style="text-align:right;">
+3.02
+</td>
+<td style="text-align:right;">
+4.58
+</td>
+<td style="text-align:right;">
+5.25
+</td>
+<td style="text-align:right;">
+12.32
+</td>
+<td style="text-align:right;">
+14.54
+</td>
+<td style="text-align:right;">
+8.42
+</td>
+<td style="text-align:right;">
+9.95
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL2</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+27.16
+</td>
+<td style="text-align:right;">
+26.29
+</td>
+<td style="text-align:right;">
+27.27
+</td>
+<td style="text-align:right;">
+26.40
+</td>
+<td style="text-align:right;">
+1.55
+</td>
+<td style="text-align:right;">
+29.77
+</td>
+<td style="text-align:right;">
+29.25
+</td>
+<td style="text-align:right;">
+29.56
+</td>
+<td style="text-align:right;">
+29.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+3.74
+</td>
+<td style="text-align:right;">
+3.82
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:right;">
+1.47
+</td>
+<td style="text-align:right;">
+6.15
+</td>
+<td style="text-align:right;">
+6.09
+</td>
+<td style="text-align:right;">
+6.04
+</td>
+<td style="text-align:right;">
+5.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.78
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+12.82
 </td>
 <td style="text-align:right;">
 12.30
 </td>
 <td style="text-align:right;">
-13.90
+0.83
 </td>
 <td style="text-align:right;">
-29.95
+14.64
 </td>
 <td style="text-align:right;">
-35.83
+14.31
 </td>
 <td style="text-align:right;">
-26.20
+14.49
 </td>
 <td style="text-align:right;">
-27.27
+14.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.10
+</td>
+<td style="text-align:right;">
+8.33
+</td>
+<td style="text-align:right;">
+8.14
+</td>
+<td style="text-align:right;">
+2.40
+</td>
+<td style="text-align:right;">
+11.88
+</td>
+<td style="text-align:right;">
+11.76
+</td>
+<td style="text-align:right;">
+11.72
+</td>
+<td style="text-align:right;">
+11.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.21
+</td>
+<td style="text-align:right;">
+11.89
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+11.94
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+16.22
+</td>
+<td style="text-align:right;">
+16.02
+</td>
+<td style="text-align:right;">
+16.05
+</td>
+<td style="text-align:right;">
+15.85
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>IMP</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+7.10
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+6.20
+</td>
+<td style="text-align:right;">
+9.26
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+1.07
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+3.30
+</td>
+<td style="text-align:right;">
+16.26
+</td>
+<td style="text-align:right;">
+25.32
+</td>
+<td style="text-align:right;">
+14.73
+</td>
+<td style="text-align:right;">
+21.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:right;">
+23.09
+</td>
+<td style="text-align:right;">
+35.12
+</td>
+<td style="text-align:right;">
+21.48
+</td>
+<td style="text-align:right;">
+31.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+3.93
+</td>
+<td style="text-align:right;">
+12.24
+</td>
+<td style="text-align:right;">
+18.63
+</td>
+<td style="text-align:right;">
+11.13
+</td>
+<td style="text-align:right;">
+15.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+5.57
+</td>
+<td style="text-align:right;">
+10.73
+</td>
+<td style="text-align:right;">
+14.89
+</td>
+<td style="text-align:right;">
+10.06
+</td>
+<td style="text-align:right;">
+13.11
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>NEU</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+17.42
+</td>
+<td style="text-align:right;">
+18.57
+</td>
+<td style="text-align:right;">
+17.09
+</td>
+<td style="text-align:right;">
+17.36
+</td>
+<td style="text-align:right;">
+7.69
+</td>
+<td style="text-align:right;">
+26.49
+</td>
+<td style="text-align:right;">
+30.67
+</td>
+<td style="text-align:right;">
+24.94
+</td>
+<td style="text-align:right;">
+25.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+10.94
+</td>
+<td style="text-align:right;">
+11.74
+</td>
+<td style="text-align:right;">
+10.61
+</td>
+<td style="text-align:right;">
+10.61
+</td>
+<td style="text-align:right;">
+5.99
+</td>
+<td style="text-align:right;">
+18.95
+</td>
+<td style="text-align:right;">
+22.90
+</td>
+<td style="text-align:right;">
+17.44
+</td>
+<td style="text-align:right;">
+17.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+26.27
+</td>
+<td style="text-align:right;">
+28.50
+</td>
+<td style="text-align:right;">
+25.89
+</td>
+<td style="text-align:right;">
+27.14
+</td>
+<td style="text-align:right;">
+5.75
+</td>
+<td style="text-align:right;">
+33.93
+</td>
+<td style="text-align:right;">
+39.35
+</td>
+<td style="text-align:right;">
+32.26
+</td>
+<td style="text-align:right;">
+33.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.57
+</td>
+<td style="text-align:right;">
+9.09
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.11
+</td>
+<td style="text-align:right;">
+6.44
+</td>
+<td style="text-align:right;">
+16.92
+</td>
+<td style="text-align:right;">
+20.23
+</td>
+<td style="text-align:right;">
+15.60
+</td>
+<td style="text-align:right;">
+15.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+10.33
+</td>
+<td style="text-align:right;">
+10.72
+</td>
+<td style="text-align:right;">
+10.06
+</td>
+<td style="text-align:right;">
+9.80
+</td>
+<td style="text-align:right;">
+8.49
+</td>
+<td style="text-align:right;">
+20.40
+</td>
+<td style="text-align:right;">
+23.40
+</td>
+<td style="text-align:right;">
+19.18
+</td>
+<td style="text-align:right;">
+19.03
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UTA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+8.91
+</td>
+<td style="text-align:right;">
+-1.42
+</td>
+<td style="text-align:right;">
+6.72
+</td>
+<td style="text-align:right;">
+5.12
+</td>
+<td style="text-align:right;">
+12.38
+</td>
+<td style="text-align:right;">
+11.33
+</td>
+<td style="text-align:right;">
+43.92
+</td>
+<td style="text-align:right;">
+60.56
+</td>
+<td style="text-align:right;">
+65.65
+</td>
+<td style="text-align:right;">
+50.09
+</td>
+<td style="text-align:right;">
+51.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+10.88
+</td>
+<td style="text-align:right;">
+-1.21
+</td>
+<td style="text-align:right;">
+7.30
+</td>
+<td style="text-align:right;">
+5.83
+</td>
+<td style="text-align:right;">
+13.53
+</td>
+<td style="text-align:right;">
+12.78
+</td>
+<td style="text-align:right;">
+28.04
+</td>
+<td style="text-align:right;">
+53.69
+</td>
+<td style="text-align:right;">
+63.21
+</td>
+<td style="text-align:right;">
+37.10
+</td>
+<td style="text-align:right;">
+39.18
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+9.60
+</td>
+<td style="text-align:right;">
+-1.18
+</td>
+<td style="text-align:right;">
+7.33
+</td>
+<td style="text-align:right;">
+5.66
+</td>
+<td style="text-align:right;">
+13.39
+</td>
+<td style="text-align:right;">
+12.45
+</td>
+<td style="text-align:right;">
+34.21
+</td>
+<td style="text-align:right;">
+55.05
+</td>
+<td style="text-align:right;">
+61.03
+</td>
+<td style="text-align:right;">
+42.33
+</td>
+<td style="text-align:right;">
+43.92
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+10.48
+</td>
+<td style="text-align:right;">
+-1.24
+</td>
+<td style="text-align:right;">
+6.99
+</td>
+<td style="text-align:right;">
+5.62
+</td>
+<td style="text-align:right;">
+13.07
+</td>
+<td style="text-align:right;">
+12.32
+</td>
+<td style="text-align:right;">
+28.75
+</td>
+<td style="text-align:right;">
+53.24
+</td>
+<td style="text-align:right;">
+62.48
+</td>
+<td style="text-align:right;">
+37.37
+</td>
+<td style="text-align:right;">
+39.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+15.37
+</td>
+<td style="text-align:right;">
+-2.57
+</td>
+<td style="text-align:right;">
+6.71
+</td>
+<td style="text-align:right;">
+4.21
+</td>
+<td style="text-align:right;">
+12.93
+</td>
+<td style="text-align:right;">
+11.28
+</td>
+<td style="text-align:right;">
+39.89
+</td>
+<td style="text-align:right;">
+65.41
+</td>
+<td style="text-align:right;">
+74.85
+</td>
+<td style="text-align:right;">
+45.94
+</td>
+<td style="text-align:right;">
+48.45
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UVA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+1.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+19.44
+</td>
+<td style="text-align:right;">
+15.56
+</td>
+<td style="text-align:right;">
+23.87
+</td>
+<td style="text-align:right;">
+23.42
+</td>
+<td style="text-align:right;">
+11.10
+</td>
+<td style="text-align:right;">
+38.06
+</td>
+<td style="text-align:right;">
+44.95
+</td>
+<td style="text-align:right;">
+33.02
+</td>
+<td style="text-align:right;">
+34.67
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+5.60
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+8.22
+</td>
+<td style="text-align:right;">
+7.79
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+26.49
+</td>
+<td style="text-align:right;">
+32.40
+</td>
+<td style="text-align:right;">
+22.49
+</td>
+<td style="text-align:right;">
+23.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.90
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+18.64
+</td>
+<td style="text-align:right;">
+14.08
+</td>
+<td style="text-align:right;">
+23.88
+</td>
+<td style="text-align:right;">
+23.40
+</td>
+<td style="text-align:right;">
+11.10
+</td>
+<td style="text-align:right;">
+37.94
+</td>
+<td style="text-align:right;">
+43.27
+</td>
+<td style="text-align:right;">
+33.72
+</td>
+<td style="text-align:right;">
+35.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.22
+</td>
+<td style="text-align:right;">
+5.94
+</td>
+<td style="text-align:right;">
+11.47
+</td>
+<td style="text-align:right;">
+10.83
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+29.22
+</td>
+<td style="text-align:right;">
+35.18
+</td>
+<td style="text-align:right;">
+25.18
+</td>
+<td style="text-align:right;">
+26.41
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+1.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+8.67
+</td>
+<td style="text-align:right;">
+15.35
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+32.46
+</td>
+<td style="text-align:right;">
+38.14
+</td>
+<td style="text-align:right;">
+28.53
+</td>
+<td style="text-align:right;">
+29.82
 </td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code># t &lt;- as.data.frame(t(w[,2:12]))
+# colnames(t) &lt;- w$team
+# t$mean &lt;- rowMeans(t)
+# t$team &lt;- rownames(t)
+# 
+# o &lt;- arrange(t, mean)
+# rownames(o) &lt;- o$team
+# 
+# ot &lt;- as.data.frame(t(o[,1:7]))
+# 
+# knitr::kable(ot[7,], digits = 2, caption = &quot;Rank ordered Mean % Reduction in Burden (HP13)&quot;) %&gt;%
+#   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 </div>
 <div id="cumulative-deaths" class="section level3">
 <h3>Cumulative Deaths</h3>
 <pre class="r"><code>file.type = file.types[3]
 tab_HP13 &lt;- read_ill(scn = &quot;HP13_&quot;)
+all.peak.weeks &lt;- data.frame(`HP13` = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2)))
+rownames(all.peak.weeks) &lt;- peak.week$V1
 
-# Cumulative Hosps
+# Cumulative Deaths
 cml &lt;- data.frame(`HP13` = tab_HP13$Cml)
 
 # Peak Magnitude
@@ -2575,8 +7409,9 @@ rownames(peak) &lt;- tab_HP13$team
 
 scenario &lt;- &quot;HP14_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP14 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP14 &lt;- long$Cml
 
 # Peak Magnitude
@@ -2584,8 +7419,9 @@ peak$HP14 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP15_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP15 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP15 &lt;- long$Cml
 
 # Peak Magnitude
@@ -2593,17 +7429,21 @@ peak$HP15 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP16_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP16 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP16 &lt;- long$Cml
 
 # Peak Magnitude
 peak$HP16 = long$Peak.Magnitude
 
+library(DataCombine)
 scenario &lt;- &quot;HP17_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP17 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
+
 cml$HP17 &lt;- long$Cml
 
 # Peak Magnitude
@@ -2611,8 +7451,9 @@ peak$HP17 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP18_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP18 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP18 &lt;- long$Cml
 
@@ -2621,8 +7462,9 @@ peak$HP18 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP19_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP19 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP19 &lt;- long$Cml
 
@@ -2631,8 +7473,9 @@ peak$HP19 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP20_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP20 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP20 &lt;- long$Cml
 
@@ -2641,8 +7484,9 @@ peak$HP20 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP21_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP21 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP21 &lt;- long$Cml
 
@@ -2651,8 +7495,9 @@ peak$HP21 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP22_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP22 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP22 &lt;- long$Cml
 
@@ -2661,8 +7506,9 @@ peak$HP22 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP23_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP23 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 
 cml$HP23 &lt;- long$Cml
 
@@ -2671,16 +7517,16 @@ peak$HP23 = long$Peak.Magnitude
 
 scenario &lt;- &quot;HP24_&quot;
 long &lt;- read_ill(scn = scenario)
+all.peak.weeks$HP24 = as.integer(gsub(&quot;Week&quot;, &quot;&quot;, peak.week$V2))
 
-# Cumulative Deaths per 100K
-
+# Cumulative Deaths
 cml$HP24 &lt;- long$Cml
 
 # Peak Magnitude
 peak$HP24 = long$Peak.Magnitude
 
-cml &lt;- cml %&gt;% convert(num(c(HP17, HP18, HP19, HP20, HP21, HP22, HP23, HP24)))
-rownames(cml) &lt;- tab_HP13$team
+# cml &lt;- cml %&gt;% convert(num(c(HP17, HP18, HP19, HP20, HP21, HP22, HP23, HP24)))
+# rownames(cml) &lt;- tab_HP13$team
 
 knitr::kable(cml, digits = 2, caption = &quot;Cumulative Deaths per 100K&quot;) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
@@ -2736,40 +7582,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-67.50
+45.39
 </td>
 <td style="text-align:right;">
-65.04
+43.93
 </td>
 <td style="text-align:right;">
-67.45
+45.39
 </td>
 <td style="text-align:right;">
-63.19
+44.45
 </td>
 <td style="text-align:right;">
-63.51
+44.10
 </td>
 <td style="text-align:right;">
-62.71
+44.40
 </td>
 <td style="text-align:right;">
-62.73
+44.04
 </td>
 <td style="text-align:right;">
-65.36
+43.67
 </td>
 <td style="text-align:right;">
-56.14
+40.55
 </td>
 <td style="text-align:right;">
-53.65
+39.84
 </td>
 <td style="text-align:right;">
-60.28
+42.61
 </td>
 <td style="text-align:right;">
-60.13
+42.25
 </td>
 </tr>
 <tr>
@@ -2818,40 +7664,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-40.94
+78.87
 </td>
 <td style="text-align:right;">
-39.00
+68.36
 </td>
 <td style="text-align:right;">
-39.56
+80.41
 </td>
 <td style="text-align:right;">
-38.71
+73.42
 </td>
 <td style="text-align:right;">
-39.85
+75.01
 </td>
 <td style="text-align:right;">
-37.89
+68.52
 </td>
 <td style="text-align:right;">
-37.74
+69.50
 </td>
 <td style="text-align:right;">
-32.36
+61.48
 </td>
 <td style="text-align:right;">
-25.23
+37.43
 </td>
 <td style="text-align:right;">
-25.15
+28.56
 </td>
 <td style="text-align:right;">
-29.62
+54.60
 </td>
 <td style="text-align:right;">
-28.83
+52.44
 </td>
 </tr>
 <tr>
@@ -2859,40 +7705,40 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-41.00
+41.34
 </td>
 <td style="text-align:right;">
 41.00
 </td>
 <td style="text-align:right;">
-41.00
+41.34
 </td>
 <td style="text-align:right;">
-37.00
+37.14
 </td>
 <td style="text-align:right;">
-38.00
+38.23
 </td>
 <td style="text-align:right;">
 35.00
 </td>
 <td style="text-align:right;">
-35.00
+35.90
 </td>
 <td style="text-align:right;">
-40.00
+40.32
 </td>
 <td style="text-align:right;">
-32.00
+32.59
 </td>
 <td style="text-align:right;">
 29.00
 </td>
 <td style="text-align:right;">
-34.00
+34.47
 </td>
 <td style="text-align:right;">
-33.00
+33.86
 </td>
 </tr>
 <tr>
@@ -2900,40 +7746,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-117.99
+158.41
 </td>
 <td style="text-align:right;">
-117.99
+157.61
 </td>
 <td style="text-align:right;">
-117.99
+158.41
 </td>
 <td style="text-align:right;">
-114.30
+156.72
 </td>
 <td style="text-align:right;">
-117.99
+146.24
 </td>
 <td style="text-align:right;">
-114.30
+156.72
 </td>
 <td style="text-align:right;">
-117.99
+146.24
 </td>
 <td style="text-align:right;">
-56.55
+143.64
 </td>
 <td style="text-align:right;">
-53.33
+134.18
 </td>
 <td style="text-align:right;">
-56.36
+126.82
 </td>
 <td style="text-align:right;">
-53.33
+135.38
 </td>
 <td style="text-align:right;">
-56.36
+129.99
 </td>
 </tr>
 <tr>
@@ -2941,40 +7787,40 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-65.59
+39.15
 </td>
 <td style="text-align:right;">
-65.57
+39.14
 </td>
 <td style="text-align:right;">
-65.59
+39.15
 </td>
 <td style="text-align:right;">
-62.11
+35.73
 </td>
 <td style="text-align:right;">
-62.25
+35.81
 </td>
 <td style="text-align:right;">
-62.10
+35.71
 </td>
 <td style="text-align:right;">
-62.24
+35.80
 </td>
 <td style="text-align:right;">
-63.82
+38.29
 </td>
 <td style="text-align:right;">
-22.65
+22.49
 </td>
 <td style="text-align:right;">
-59.59
+34.50
 </td>
 <td style="text-align:right;">
-59.58
+34.50
 </td>
 <td style="text-align:right;">
-59.66
+34.55
 </td>
 </tr>
 </tbody>
@@ -3039,40 +7885,40 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-11.66
+5.46
 </td>
 <td style="text-align:right;">
-11.64
+5.46
 </td>
 <td style="text-align:right;">
-11.66
+5.46
 </td>
 <td style="text-align:right;">
-9.92
+5.41
 </td>
 <td style="text-align:right;">
-9.45
+5.13
 </td>
 <td style="text-align:right;">
-9.92
+5.41
 </td>
 <td style="text-align:right;">
-9.45
+5.13
 </td>
 <td style="text-align:right;">
-11.03
+5.13
 </td>
 <td style="text-align:right;">
-9.26
+5.07
 </td>
 <td style="text-align:right;">
-8.49
+4.82
 </td>
 <td style="text-align:right;">
-9.37
+5.07
 </td>
 <td style="text-align:right;">
-8.87
+4.82
 </td>
 </tr>
 <tr>
@@ -3121,40 +7967,40 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-7.12
+13.17
 </td>
 <td style="text-align:right;">
-7.02
+13.00
 </td>
 <td style="text-align:right;">
-6.86
+13.61
 </td>
 <td style="text-align:right;">
-4.92
+9.16
 </td>
 <td style="text-align:right;">
-5.26
+9.92
 </td>
 <td style="text-align:right;">
-4.94
+8.96
 </td>
 <td style="text-align:right;">
-5.10
+9.51
 </td>
 <td style="text-align:right;">
-5.52
+10.11
 </td>
 <td style="text-align:right;">
-3.68
+6.54
 </td>
 <td style="text-align:right;">
-4.00
+5.58
 </td>
 <td style="text-align:right;">
-3.74
+7.29
 </td>
 <td style="text-align:right;">
-3.92
+7.16
 </td>
 </tr>
 <tr>
@@ -3162,40 +8008,40 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-8.98
+9.01
 </td>
 <td style="text-align:right;">
-8.99
+9.05
 </td>
 <td style="text-align:right;">
-8.98
-</td>
-<td style="text-align:right;">
-4.93
-</td>
-<td style="text-align:right;">
-4.15
+8.97
 </td>
 <td style="text-align:right;">
 4.93
 </td>
 <td style="text-align:right;">
-4.15
+4.16
 </td>
 <td style="text-align:right;">
-9.04
+4.95
+</td>
+<td style="text-align:right;">
+4.14
+</td>
+<td style="text-align:right;">
+9.03
 </td>
 <td style="text-align:right;">
 4.93
 </td>
 <td style="text-align:right;">
-4.11
+4.12
 </td>
 <td style="text-align:right;">
-4.93
+4.91
 </td>
 <td style="text-align:right;">
-4.11
+4.12
 </td>
 </tr>
 <tr>
@@ -3203,40 +8049,40 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 </tr>
 <tr>
@@ -3244,40 +8090,916 @@ IMP
 COL2
 </td>
 <td style="text-align:right;">
-17.88
+11.42
 </td>
 <td style="text-align:right;">
-17.88
+11.42
 </td>
 <td style="text-align:right;">
-17.88
+11.42
 </td>
 <td style="text-align:right;">
-14.43
+8.36
 </td>
 <td style="text-align:right;">
-14.82
+8.62
 </td>
 <td style="text-align:right;">
-14.43
+8.36
 </td>
 <td style="text-align:right;">
-14.82
+8.62
 </td>
 <td style="text-align:right;">
-17.24
+11.08
 </td>
 <td style="text-align:right;">
-5.26
+5.37
 </td>
 <td style="text-align:right;">
-13.71
+8.08
 </td>
 <td style="text-align:right;">
-13.50
+7.94
 </td>
 <td style="text-align:right;">
-13.71
+8.08
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_reduction &lt;- data.frame(HP14 = (peak$HP13 - peak$HP14)/peak$HP13,
+                             HP15 = (peak$HP13 - peak$HP15)/peak$HP13,
+                             HP16 = (peak$HP13 - peak$HP16)/peak$HP13,
+                             HP17 = (peak$HP13 - peak$HP17)/peak$HP13,
+                             HP18 = (peak$HP13 - peak$HP18)/peak$HP13,
+                             HP19 = (peak$HP13 - peak$HP19)/peak$HP13,
+                             HP20 = (peak$HP13 - peak$HP20)/peak$HP13,
+                             HP21 = (peak$HP13 - peak$HP21)/peak$HP13,
+                             HP22 = (peak$HP13 - peak$HP22)/peak$HP13,
+                             HP23 = (peak$HP13 - peak$HP23)/peak$HP13,
+                             HP24 = (peak$HP13 - peak$HP24)/peak$HP13)
+rownames(peak_reduction) &lt;- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = &quot;% Reduction in Peak Deaths per 100K (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Peak Deaths per 100K (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.94
+</td>
+<td style="text-align:right;">
+5.98
+</td>
+<td style="text-align:right;">
+0.94
+</td>
+<td style="text-align:right;">
+5.98
+</td>
+<td style="text-align:right;">
+5.93
+</td>
+<td style="text-align:right;">
+7.19
+</td>
+<td style="text-align:right;">
+11.73
+</td>
+<td style="text-align:right;">
+7.19
+</td>
+<td style="text-align:right;">
+11.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+20.85
+</td>
+<td style="text-align:right;">
+28.21
+</td>
+<td style="text-align:right;">
+20.83
+</td>
+<td style="text-align:right;">
+28.18
+</td>
+<td style="text-align:right;">
+17.33
+</td>
+<td style="text-align:right;">
+39.51
+</td>
+<td style="text-align:right;">
+44.03
+</td>
+<td style="text-align:right;">
+39.47
+</td>
+<td style="text-align:right;">
+43.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+1.31
+</td>
+<td style="text-align:right;">
+-3.37
+</td>
+<td style="text-align:right;">
+30.43
+</td>
+<td style="text-align:right;">
+24.71
+</td>
+<td style="text-align:right;">
+31.97
+</td>
+<td style="text-align:right;">
+27.82
+</td>
+<td style="text-align:right;">
+23.24
+</td>
+<td style="text-align:right;">
+50.35
+</td>
+<td style="text-align:right;">
+57.60
+</td>
+<td style="text-align:right;">
+44.65
+</td>
+<td style="text-align:right;">
+45.61
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+-0.48
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+<td style="text-align:right;">
+45.25
+</td>
+<td style="text-align:right;">
+53.82
+</td>
+<td style="text-align:right;">
+45.01
+</td>
+<td style="text-align:right;">
+54.01
+</td>
+<td style="text-align:right;">
+-0.27
+</td>
+<td style="text-align:right;">
+45.27
+</td>
+<td style="text-align:right;">
+54.28
+</td>
+<td style="text-align:right;">
+45.44
+</td>
+<td style="text-align:right;">
+54.27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+26.78
+</td>
+<td style="text-align:right;">
+24.49
+</td>
+<td style="text-align:right;">
+26.78
+</td>
+<td style="text-align:right;">
+24.49
+</td>
+<td style="text-align:right;">
+2.95
+</td>
+<td style="text-align:right;">
+52.94
+</td>
+<td style="text-align:right;">
+29.21
+</td>
+<td style="text-align:right;">
+30.45
+</td>
+<td style="text-align:right;">
+29.21
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = &quot;Peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP13
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>peak_delay &lt;- data.frame(HP14 = -(all.peak.weeks$HP13 - all.peak.weeks$HP14),
+                             HP15 = -(all.peak.weeks$HP13 - all.peak.weeks$HP15),
+                             HP16 = -(all.peak.weeks$HP13 - all.peak.weeks$HP16),
+                             HP17 = -(all.peak.weeks$HP13 - all.peak.weeks$HP17),
+                             HP18 = -(all.peak.weeks$HP13 - all.peak.weeks$HP18),
+                             HP19 = -(all.peak.weeks$HP13 - all.peak.weeks$HP19),
+                             HP20 = -(all.peak.weeks$HP13 - all.peak.weeks$HP20),
+                             HP21 = -(all.peak.weeks$HP13 - all.peak.weeks$HP21),
+                             HP22 = -(all.peak.weeks$HP13 - all.peak.weeks$HP22),
+                             HP23 = -(all.peak.weeks$HP13 - all.peak.weeks$HP23),
+                             HP24 = -(all.peak.weeks$HP13 - all.peak.weeks$HP24))
+rownames(peak_delay) &lt;- rownames(peak)
+
+knitr::kable(peak_delay, digits = 2, caption = &quot;Delay in peak Week&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Delay in peak Week
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 </tbody>
@@ -3343,37 +9065,37 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-3.63
+3.21
 </td>
 <td style="text-align:right;">
-0.07
+0.00
 </td>
 <td style="text-align:right;">
-6.39
+2.07
 </td>
 <td style="text-align:right;">
-5.91
+2.83
 </td>
 <td style="text-align:right;">
-7.10
+2.17
 </td>
 <td style="text-align:right;">
-7.07
+2.96
 </td>
 <td style="text-align:right;">
-3.16
+3.80
 </td>
 <td style="text-align:right;">
-16.82
+10.66
 </td>
 <td style="text-align:right;">
-20.52
+12.23
 </td>
 <td style="text-align:right;">
-10.69
+6.12
 </td>
 <td style="text-align:right;">
-10.91
+6.91
 </td>
 </tr>
 <tr>
@@ -3387,31 +9109,31 @@ COL2
 0.00
 </td>
 <td style="text-align:right;">
-5.30
+8.74
 </td>
 <td style="text-align:right;">
-5.09
+8.52
 </td>
 <td style="text-align:right;">
-5.31
+8.78
 </td>
 <td style="text-align:right;">
-5.10
+8.56
 </td>
 <td style="text-align:right;">
-2.69
+2.20
 </td>
 <td style="text-align:right;">
-65.47
+42.56
 </td>
 <td style="text-align:right;">
-9.15
+11.88
 </td>
 <td style="text-align:right;">
-9.16
+11.88
 </td>
 <td style="text-align:right;">
-9.03
+11.74
 </td>
 </tr>
 <tr>
@@ -3419,37 +9141,37 @@ COL2
 IMP
 </td>
 <td style="text-align:right;">
-0.00
+0.50
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-3.13
+1.07
 </td>
 <td style="text-align:right;">
-0.00
+7.68
 </td>
 <td style="text-align:right;">
-3.13
+1.07
 </td>
 <td style="text-align:right;">
-0.00
+7.68
 </td>
 <td style="text-align:right;">
-52.08
+9.32
 </td>
 <td style="text-align:right;">
-54.81
+15.29
 </td>
 <td style="text-align:right;">
-52.24
+19.94
 </td>
 <td style="text-align:right;">
-54.81
+14.54
 </td>
 <td style="text-align:right;">
-52.24
+17.94
 </td>
 </tr>
 <tr>
@@ -3495,37 +9217,37 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-4.74
+13.33
 </td>
 <td style="text-align:right;">
-3.37
+-1.95
 </td>
 <td style="text-align:right;">
-5.44
+6.91
 </td>
 <td style="text-align:right;">
-2.67
+4.90
 </td>
 <td style="text-align:right;">
-7.46
+13.12
 </td>
 <td style="text-align:right;">
-7.81
+11.88
 </td>
 <td style="text-align:right;">
-20.95
+22.05
 </td>
 <td style="text-align:right;">
-38.37
+52.54
 </td>
 <td style="text-align:right;">
-38.56
+63.79
 </td>
 <td style="text-align:right;">
-27.66
+30.77
 </td>
 <td style="text-align:right;">
-29.58
+33.52
 </td>
 </tr>
 <tr>
@@ -3533,41 +9255,1565 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-0.00
+0.83
 </td>
 <td style="text-align:right;">
 0.00
 </td>
 <td style="text-align:right;">
-9.76
+10.17
 </td>
 <td style="text-align:right;">
-7.32
+7.52
 </td>
 <td style="text-align:right;">
-14.63
+15.34
 </td>
 <td style="text-align:right;">
-14.63
+13.16
 </td>
 <td style="text-align:right;">
-2.44
+2.46
 </td>
 <td style="text-align:right;">
-21.95
+21.17
 </td>
 <td style="text-align:right;">
-29.27
+29.85
+</td>
+<td style="text-align:right;">
+16.62
+</td>
+<td style="text-align:right;">
+18.09
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>t &lt;- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
+
+dt &lt;- as.data.frame(t)
+rownames(dt) &lt;- w$team
+colnames(dt) &lt;- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 1, caption = &quot;Rank Order of % Reduction in Burden (HP13)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+Rank Order of % Reduction in Burden (HP13)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+COL
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+10.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COL2
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+IMP
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+6.5
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+6.5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UTA
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+9.0
+</td>
+<td style="text-align:right;">
+10.0
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UVA
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+7.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+6.0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>a &lt;- read.csv(&quot;./Deaths_age_EPI2.csv&quot;)
+a$scenario &lt;- sub(&quot;_&quot;, &quot;&quot;, a$scenario)
+
+w &lt;- spread(a[2:5], key = &quot;scenario&quot;, value = &quot;reduction&quot;)
+
+knitr::kable(w[2:13], digits = 2, caption = &quot;% Reduction in Burden by Age (HP01)&quot;) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+  pack_rows(index = table(w$team))</code></pre>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+% Reduction in Burden by Age (HP01)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+agegroup
+</th>
+<th style="text-align:right;">
+HP14
+</th>
+<th style="text-align:right;">
+HP15
+</th>
+<th style="text-align:right;">
+HP16
+</th>
+<th style="text-align:right;">
+HP17
+</th>
+<th style="text-align:right;">
+HP18
+</th>
+<th style="text-align:right;">
+HP19
+</th>
+<th style="text-align:right;">
+HP20
+</th>
+<th style="text-align:right;">
+HP21
+</th>
+<th style="text-align:right;">
+HP22
+</th>
+<th style="text-align:right;">
+HP23
+</th>
+<th style="text-align:right;">
+HP24
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+4.76
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.81
+</td>
+<td style="text-align:right;">
+4.40
+</td>
+<td style="text-align:right;">
+2.91
+</td>
+<td style="text-align:right;">
+4.53
+</td>
+<td style="text-align:right;">
+4.64
+</td>
+<td style="text-align:right;">
+13.96
+</td>
+<td style="text-align:right;">
+16.62
+</td>
+<td style="text-align:right;">
+7.77
+</td>
+<td style="text-align:right;">
+9.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.24
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.40
+</td>
+<td style="text-align:right;">
+1.35
+</td>
+<td style="text-align:right;">
+1.51
+</td>
+<td style="text-align:right;">
+2.25
+</td>
+<td style="text-align:right;">
+8.50
+</td>
+<td style="text-align:right;">
+9.49
+</td>
+<td style="text-align:right;">
+3.75
+</td>
+<td style="text-align:right;">
+3.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+4.23
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+9.64
+</td>
+<td style="text-align:right;">
+13.40
+</td>
+<td style="text-align:right;">
+10.02
+</td>
+<td style="text-align:right;">
+13.87
+</td>
+<td style="text-align:right;">
+3.72
+</td>
+<td style="text-align:right;">
+19.22
+</td>
+<td style="text-align:right;">
+23.69
+</td>
+<td style="text-align:right;">
+14.06
+</td>
+<td style="text-align:right;">
+17.66
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.95
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.24
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+1.31
+</td>
+<td style="text-align:right;">
+1.36
+</td>
+<td style="text-align:right;">
+3.32
+</td>
+<td style="text-align:right;">
+10.22
+</td>
+<td style="text-align:right;">
+11.21
+</td>
+<td style="text-align:right;">
+4.75
+</td>
+<td style="text-align:right;">
+4.83
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.89
+</td>
+<td style="text-align:right;">
+4.41
+</td>
+<td style="text-align:right;">
+3.02
+</td>
+<td style="text-align:right;">
+4.58
+</td>
+<td style="text-align:right;">
+5.25
+</td>
+<td style="text-align:right;">
+12.32
+</td>
+<td style="text-align:right;">
+14.54
+</td>
+<td style="text-align:right;">
+8.42
+</td>
+<td style="text-align:right;">
+9.95
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>COL2</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+27.16
+</td>
+<td style="text-align:right;">
+26.29
+</td>
+<td style="text-align:right;">
+27.27
+</td>
+<td style="text-align:right;">
+26.40
+</td>
+<td style="text-align:right;">
+1.55
+</td>
+<td style="text-align:right;">
+29.77
+</td>
+<td style="text-align:right;">
+29.25
+</td>
+<td style="text-align:right;">
+29.56
+</td>
+<td style="text-align:right;">
+29.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+3.74
+</td>
+<td style="text-align:right;">
+3.82
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:right;">
+1.47
+</td>
+<td style="text-align:right;">
+6.15
+</td>
+<td style="text-align:right;">
+6.09
+</td>
+<td style="text-align:right;">
+6.04
+</td>
+<td style="text-align:right;">
+5.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.78
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+12.82
+</td>
+<td style="text-align:right;">
+12.30
+</td>
+<td style="text-align:right;">
+0.83
+</td>
+<td style="text-align:right;">
+14.64
+</td>
+<td style="text-align:right;">
+14.31
+</td>
+<td style="text-align:right;">
+14.49
+</td>
+<td style="text-align:right;">
+14.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.10
+</td>
+<td style="text-align:right;">
+8.33
+</td>
+<td style="text-align:right;">
+8.14
+</td>
+<td style="text-align:right;">
+2.40
+</td>
+<td style="text-align:right;">
+11.88
+</td>
+<td style="text-align:right;">
+11.76
+</td>
+<td style="text-align:right;">
+11.72
+</td>
+<td style="text-align:right;">
+11.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.21
+</td>
+<td style="text-align:right;">
+11.89
+</td>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+11.94
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+16.22
+</td>
+<td style="text-align:right;">
+16.02
+</td>
+<td style="text-align:right;">
+16.05
+</td>
+<td style="text-align:right;">
+15.85
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>IMP</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+6.83
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+7.10
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+6.20
+</td>
+<td style="text-align:right;">
+9.26
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+1.07
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+2.33
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:right;">
+8.22
+</td>
+<td style="text-align:right;">
+20.52
+</td>
+<td style="text-align:right;">
+29.12
+</td>
+<td style="text-align:right;">
+19.07
+</td>
+<td style="text-align:right;">
+25.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+1.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+25.86
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:right;">
+23.09
+</td>
+<td style="text-align:right;">
+35.12
+</td>
+<td style="text-align:right;">
+21.48
+</td>
+<td style="text-align:right;">
+31.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+10.12
+</td>
+<td style="text-align:right;">
+7.89
+</td>
+<td style="text-align:right;">
+15.85
+</td>
+<td style="text-align:right;">
+21.97
+</td>
+<td style="text-align:right;">
+14.79
+</td>
+<td style="text-align:right;">
+19.18
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+9.68
+</td>
+<td style="text-align:right;">
+14.61
+</td>
+<td style="text-align:right;">
+18.60
+</td>
+<td style="text-align:right;">
+13.98
+</td>
+<td style="text-align:right;">
+16.89
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>NEU</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+17.43
+</td>
+<td style="text-align:right;">
+18.56
 </td>
 <td style="text-align:right;">
 17.07
 </td>
 <td style="text-align:right;">
-19.51
+17.35
+</td>
+<td style="text-align:right;">
+15.96
+</td>
+<td style="text-align:right;">
+33.07
+</td>
+<td style="text-align:right;">
+36.88
+</td>
+<td style="text-align:right;">
+31.66
+</td>
+<td style="text-align:right;">
+32.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+10.93
+</td>
+<td style="text-align:right;">
+11.74
+</td>
+<td style="text-align:right;">
+10.61
+</td>
+<td style="text-align:right;">
+10.60
+</td>
+<td style="text-align:right;">
+11.82
+</td>
+<td style="text-align:right;">
+23.98
+</td>
+<td style="text-align:right;">
+27.67
+</td>
+<td style="text-align:right;">
+22.55
+</td>
+<td style="text-align:right;">
+22.64
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+26.27
+</td>
+<td style="text-align:right;">
+28.49
+</td>
+<td style="text-align:right;">
+25.88
+</td>
+<td style="text-align:right;">
+27.15
+</td>
+<td style="text-align:right;">
+14.20
+</td>
+<td style="text-align:right;">
+39.84
+</td>
+<td style="text-align:right;">
+44.78
+</td>
+<td style="text-align:right;">
+38.33
+</td>
+<td style="text-align:right;">
+39.67
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.57
+</td>
+<td style="text-align:right;">
+9.09
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+8.12
+</td>
+<td style="text-align:right;">
+-19.77
+</td>
+<td style="text-align:right;">
+-6.34
+</td>
+<td style="text-align:right;">
+-2.11
+</td>
+<td style="text-align:right;">
+-8.04
+</td>
+<td style="text-align:right;">
+-8.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+10.32
+</td>
+<td style="text-align:right;">
+10.72
+</td>
+<td style="text-align:right;">
+10.06
+</td>
+<td style="text-align:right;">
+9.80
+</td>
+<td style="text-align:right;">
+14.17
+</td>
+<td style="text-align:right;">
+25.34
+</td>
+<td style="text-align:right;">
+28.15
+</td>
+<td style="text-align:right;">
+24.19
+</td>
+<td style="text-align:right;">
+24.06
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UTA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+8.77
+</td>
+<td style="text-align:right;">
+-1.42
+</td>
+<td style="text-align:right;">
+6.73
+</td>
+<td style="text-align:right;">
+5.13
+</td>
+<td style="text-align:right;">
+12.41
+</td>
+<td style="text-align:right;">
+11.36
+</td>
+<td style="text-align:right;">
+26.38
+</td>
+<td style="text-align:right;">
+48.08
+</td>
+<td style="text-align:right;">
+54.72
+</td>
+<td style="text-align:right;">
+34.48
+</td>
+<td style="text-align:right;">
+36.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+11.03
+</td>
+<td style="text-align:right;">
+-1.21
+</td>
+<td style="text-align:right;">
+7.28
+</td>
+<td style="text-align:right;">
+5.85
+</td>
+<td style="text-align:right;">
+13.49
+</td>
+<td style="text-align:right;">
+12.78
+</td>
+<td style="text-align:right;">
+17.04
+</td>
+<td style="text-align:right;">
+46.82
+</td>
+<td style="text-align:right;">
+57.84
+</td>
+<td style="text-align:right;">
+27.45
+</td>
+<td style="text-align:right;">
+29.78
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+9.58
+</td>
+<td style="text-align:right;">
+-1.17
+</td>
+<td style="text-align:right;">
+7.34
+</td>
+<td style="text-align:right;">
+5.69
+</td>
+<td style="text-align:right;">
+13.41
+</td>
+<td style="text-align:right;">
+12.48
+</td>
+<td style="text-align:right;">
+20.49
+</td>
+<td style="text-align:right;">
+45.63
+</td>
+<td style="text-align:right;">
+52.84
+</td>
+<td style="text-align:right;">
+30.31
+</td>
+<td style="text-align:right;">
+32.21
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+10.61
+</td>
+<td style="text-align:right;">
+-1.24
+</td>
+<td style="text-align:right;">
+6.98
+</td>
+<td style="text-align:right;">
+5.64
+</td>
+<td style="text-align:right;">
+13.05
+</td>
+<td style="text-align:right;">
+12.33
+</td>
+<td style="text-align:right;">
+17.48
+</td>
+<td style="text-align:right;">
+46.07
+</td>
+<td style="text-align:right;">
+56.79
+</td>
+<td style="text-align:right;">
+27.44
+</td>
+<td style="text-align:right;">
+29.75
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+15.33
+</td>
+<td style="text-align:right;">
+-2.54
+</td>
+<td style="text-align:right;">
+6.69
+</td>
+<td style="text-align:right;">
+4.18
+</td>
+<td style="text-align:right;">
+12.93
+</td>
+<td style="text-align:right;">
+11.27
+</td>
+<td style="text-align:right;">
+25.83
+</td>
+<td style="text-align:right;">
+57.33
+</td>
+<td style="text-align:right;">
+68.98
+</td>
+<td style="text-align:right;">
+33.31
+</td>
+<td style="text-align:right;">
+36.42
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="12" style="border-bottom: 1px solid;">
+<strong>UVA</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+2.32
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+19.44
+</td>
+<td style="text-align:right;">
+15.56
+</td>
+<td style="text-align:right;">
+51.16
+</td>
+<td style="text-align:right;">
+23.42
+</td>
+<td style="text-align:right;">
+4.07
+</td>
+<td style="text-align:right;">
+33.17
+</td>
+<td style="text-align:right;">
+51.16
+</td>
+<td style="text-align:right;">
+27.73
+</td>
+<td style="text-align:right;">
+29.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+1.58
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+5.60
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+12.51
+</td>
+<td style="text-align:right;">
+7.79
+</td>
+<td style="text-align:right;">
+5.01
+</td>
+<td style="text-align:right;">
+18.03
+</td>
+<td style="text-align:right;">
+28.92
+</td>
+<td style="text-align:right;">
+13.58
+</td>
+<td style="text-align:right;">
+14.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+14.98
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+18.64
+</td>
+<td style="text-align:right;">
+14.08
+</td>
+<td style="text-align:right;">
+31.99
+</td>
+<td style="text-align:right;">
+23.40
+</td>
+<td style="text-align:right;">
+4.20
+</td>
+<td style="text-align:right;">
+33.13
+</td>
+<td style="text-align:right;">
+48.99
+</td>
+<td style="text-align:right;">
+28.57
+</td>
+<td style="text-align:right;">
+30.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+2.39
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+8.22
+</td>
+<td style="text-align:right;">
+5.94
+</td>
+<td style="text-align:right;">
+11.84
+</td>
+<td style="text-align:right;">
+10.83
+</td>
+<td style="text-align:right;">
+5.03
+</td>
+<td style="text-align:right;">
+21.11
+</td>
+<td style="text-align:right;">
+27.58
+</td>
+<td style="text-align:right;">
+16.60
+</td>
+<td style="text-align:right;">
+17.97
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+11.58
+</td>
+<td style="text-align:right;">
+8.67
+</td>
+<td style="text-align:right;">
+15.23
+</td>
+<td style="text-align:right;">
+14.80
+</td>
+<td style="text-align:right;">
+1.02
+</td>
+<td style="text-align:right;">
+21.53
+</td>
+<td style="text-align:right;">
+28.18
+</td>
+<td style="text-align:right;">
+16.97
+</td>
+<td style="text-align:right;">
+18.46
 </td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code># t &lt;- as.data.frame(t(w[,2:12]))
+# colnames(t) &lt;- w$team
+# t$mean &lt;- rowMeans(t)
+# t$team &lt;- rownames(t)
+# 
+# o &lt;- arrange(t, mean)
+# rownames(o) &lt;- o$team
+# 
+# ot &lt;- as.data.frame(t(o[,1:7]))
+# 
+# knitr::kable(ot[7,], digits = 2, caption = &quot;Rank ordered Mean % Reduction in Burden (HP13)&quot;) %&gt;%
+#   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;))</code></pre>
 </div>
 <div id="cumulative-antivirals" class="section level3">
 <h3>Cumulative % Antivirals</h3>
@@ -3660,19 +10906,19 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-4.16
+3.36
 </td>
 <td style="text-align:right;">
-3.51
+3.08
 </td>
 <td style="text-align:right;">
-3.35
+3.03
 </td>
 <td style="text-align:right;">
-3.77
+3.25
 </td>
 <td style="text-align:right;">
-3.76
+3.23
 </td>
 </tr>
 <tr>
@@ -3700,19 +10946,19 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-10.34
+20.22
 </td>
 <td style="text-align:right;">
-8.41
+13.86
 </td>
 <td style="text-align:right;">
-8.42
+11.66
 </td>
 <td style="text-align:right;">
-9.33
+17.75
 </td>
 <td style="text-align:right;">
-9.09
+17.17
 </td>
 </tr>
 <tr>
@@ -3720,19 +10966,19 @@ UTA
 UVA
 </td>
 <td style="text-align:right;">
-10.00
+10.78
 </td>
 <td style="text-align:right;">
-8.00
+8.67
 </td>
 <td style="text-align:right;">
 7.00
 </td>
 <td style="text-align:right;">
-9.00
+9.18
 </td>
 <td style="text-align:right;">
-9.00
+9.01
 </td>
 </tr>
 <tr>
@@ -3740,39 +10986,19 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-2.39
+5.58
 </td>
 <td style="text-align:right;">
-2.19
+4.96
 </td>
 <td style="text-align:right;">
-2.38
+4.51
 </td>
 <td style="text-align:right;">
-2.19
+5.03
 </td>
 <td style="text-align:right;">
-2.38
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-COL2
-</td>
-<td style="text-align:right;">
-3.42
-</td>
-<td style="text-align:right;">
-3.14
-</td>
-<td style="text-align:right;">
-3.14
-</td>
-<td style="text-align:right;">
-3.14
-</td>
-<td style="text-align:right;">
-3.15
+4.70
 </td>
 </tr>
 </tbody>
@@ -3816,19 +11042,19 @@ HP24
 COL
 </td>
 <td style="text-align:right;">
-0.73
+0.38
 </td>
 <td style="text-align:right;">
-0.60
+0.38
 </td>
 <td style="text-align:right;">
-0.54
+0.35
 </td>
 <td style="text-align:right;">
-0.60
+0.38
 </td>
 <td style="text-align:right;">
-0.57
+0.35
 </td>
 </tr>
 <tr>
@@ -3856,19 +11082,19 @@ NEU
 UTA
 </td>
 <td style="text-align:right;">
-1.89
+3.59
 </td>
 <td style="text-align:right;">
-1.20
+2.36
 </td>
 <td style="text-align:right;">
-1.32
+2.21
 </td>
 <td style="text-align:right;">
-1.20
+2.50
 </td>
 <td style="text-align:right;">
-1.28
+2.50
 </td>
 </tr>
 <tr>
@@ -3896,39 +11122,19 @@ UVA
 IMP
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
+0.02
 </td>
 <td style="text-align:right;">
-0.03
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-COL2
-</td>
-<td style="text-align:right;">
-0.95
-</td>
-<td style="text-align:right;">
-0.73
-</td>
-<td style="text-align:right;">
-0.74
-</td>
-<td style="text-align:right;">
-0.73
-</td>
-<td style="text-align:right;">
-0.74
+0.02
 </td>
 </tr>
 </tbody>

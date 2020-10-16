@@ -60,6 +60,9 @@ read_ill <- function(scn){
                                        s$Bin_cml %in% cols),],
                              `team` = team.abbrev[1]))
   
+  df_sub <- select(symillness, contains("Week"))
+  peak.week<- c(team.abbrev[1], colnames(df_sub)[which.max(df_sub)])
+  
   for(i in 2:6){
     
     if(i == 4){
@@ -88,9 +91,11 @@ read_ill <- function(scn){
       if(ncol(s) > 58){
         s <- s[-1]
       }
-      symillness <- rbind.fill(symillness, 
-                               data.frame(c(s[which(s$Agegroup == "Overall" & 
-                                                      s$Bin_cml %in% cols),],`team` = team.abbrev[i])))
+      u <- data.frame(c(s[which(s$Agegroup == "Overall" & 
+                                  s$Bin_cml %in% cols),],`team` = team.abbrev[i]))
+      symillness <- rbind.fill(symillness, u)
+      df_sub <- select(u, contains("Week"))
+      peak.week <- rbind(peak.week, c(team.abbrev[i], colnames(df_sub)[which.max(df_sub)]))
     }
     
   }
@@ -99,11 +104,13 @@ read_ill <- function(scn){
   
   symillness$Bin[which(symillness$Bin_cml == "Peak")] <- "sm.peak"
   cml <- symillness[c("Cml", "team", "Bin", "Peak.Magnitude")]
-  
+  peak.week <<- as.data.frame(peak.week)
   return(cml)
 }
 
 tab_HP01 <- read_ill(scn = "HP01_")
+all.peak.weeks <- data.frame(`HP01` = as.integer(gsub("Week", "", peak.week$V2)))
+rownames(all.peak.weeks) <- peak.week$V1
 
 # Cumulative % Ill
 cml <- data.frame(`HP01` = tab_HP01$Cml)
@@ -116,6 +123,7 @@ rownames(peak) <- tab_HP01$team
 
 scenario <- "HP02_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP02 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP02 <- long$Cml
@@ -125,6 +133,7 @@ peak$HP02 = long$Peak.Magnitude
 
 scenario <- "HP03_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP03 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP03 <- long$Cml
@@ -134,6 +143,7 @@ peak$HP03 = long$Peak.Magnitude
 
 scenario <- "HP04_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP04 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP04 <- long$Cml
@@ -143,6 +153,7 @@ peak$HP04 = long$Peak.Magnitude
 
 scenario <- "HP05_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP05 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP05 <- long$Cml
@@ -152,6 +163,7 @@ peak$HP05 = long$Peak.Magnitude
 
 scenario <- "HP06_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP06 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP06 <- long$Cml
@@ -161,6 +173,7 @@ peak$HP06 = long$Peak.Magnitude
 
 scenario <- "HP07_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP07 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP07 <- long$Cml
@@ -170,6 +183,7 @@ peak$HP07 = long$Peak.Magnitude
 
 scenario <- "HP08_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP08 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP08 <- long$Cml
@@ -179,6 +193,7 @@ peak$HP08 = long$Peak.Magnitude
 
 scenario <- "HP09_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP09 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP09 <- long$Cml
@@ -188,6 +203,7 @@ peak$HP09 = long$Peak.Magnitude
 
 scenario <- "HP10_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP10 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP10 <- long$Cml
@@ -197,6 +213,7 @@ peak$HP10 = long$Peak.Magnitude
 
 scenario <- "HP11_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP11 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP11 <- long$Cml
@@ -206,6 +223,7 @@ peak$HP11 = long$Peak.Magnitude
 
 scenario <- "HP12_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP12 = as.integer(gsub("Week", "", peak.week$V2))
 
 # Cumulative % Ill
 cml$HP12 <- long$Cml
@@ -232,6 +250,43 @@ knitr::kable(cml, digits = 2, caption = "Cumulative % Ill") %>%
 knitr::kable(peak, digits = 2, caption = "Peak Magnitude Ill") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+peak_reduction <- data.frame(HP02 = (peak$HP01 - peak$HP02)/peak$HP01,
+                             HP03 = (peak$HP01 - peak$HP03)/peak$HP01,
+                             HP04 = (peak$HP01 - peak$HP04)/peak$HP01,
+                             HP05 = (peak$HP01 - peak$HP05)/peak$HP01,
+                             HP06 = (peak$HP01 - peak$HP06)/peak$HP01,
+                             HP07 = (peak$HP01 - peak$HP07)/peak$HP01,
+                             HP08 = (peak$HP01 - peak$HP08)/peak$HP01,
+                             HP09 = (peak$HP01 - peak$HP09)/peak$HP01,
+                             HP10 = (peak$HP01 - peak$HP10)/peak$HP01,
+                             HP11 = (peak$HP01 - peak$HP11)/peak$HP01,
+                             HP12 = (peak$HP01 - peak$HP12)/peak$HP01)
+rownames(peak_reduction) <- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = "% Reduction in Peak Magnitude Ill (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = "Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+##Peak Delay
+peak_delay <- data.frame(HP02 = -(all.peak.weeks$HP01 - all.peak.weeks$HP02),
+                             HP03 = -(all.peak.weeks$HP01 - all.peak.weeks$HP03),
+                             HP04 = -(all.peak.weeks$HP01 - all.peak.weeks$HP04),
+                             HP05 = -(all.peak.weeks$HP01 - all.peak.weeks$HP05),
+                             HP06 = -(all.peak.weeks$HP01 - all.peak.weeks$HP06),
+                             HP07 = -(all.peak.weeks$HP01 - all.peak.weeks$HP07),
+                             HP08 = -(all.peak.weeks$HP01 - all.peak.weeks$HP08),
+                             HP09 = -(all.peak.weeks$HP01 - all.peak.weeks$HP09),
+                             HP10 = -(all.peak.weeks$HP01 - all.peak.weeks$HP10),
+                             HP11 = -(all.peak.weeks$HP01 - all.peak.weeks$HP11),
+                             HP12 = -(all.peak.weeks$HP01 - all.peak.weeks$HP12))
+rownames(peak_delay) <- rownames(peak_reduction)
+knitr::kable(peak_delay, digits = 2, caption = "Delay in Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
 ```
 
 
@@ -250,11 +305,54 @@ knitr::kable(w, digits = 2, caption = "% Reduction in Burden (HP01)") %>%
 
 ```
 
+```{r ill_4, warning=FALSE, message=FALSE}
+t <- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
+
+dt <- as.data.frame(t)
+rownames(dt) <- w$team
+colnames(dt) <- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 2, caption = "Rank Order of % Reduction in Burden (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+a <- read.csv("./SympIllness_age_EPI1.csv")
+a$scenario <- sub("_", "", a$scenario)
+
+w <- spread(a[2:5], key = "scenario", value = "reduction")
+
+knitr::kable(w[2:13], digits = 2, caption = "% Reduction in Burden by Age (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  pack_rows(index = table(w$team))
+
+```
+
+```{r ill_5, warning=FALSE, message=FALSE}
+# t <- as.data.frame(t(w[,2:12]))
+# colnames(t) <- w$team
+# t$mean <- rowMeans(t)
+# t$team <- rownames(t)
+# 
+# o <- arrange(t, mean)
+# rownames(o) <- o$team
+# 
+# ot <- as.data.frame(t(o[,1:7]))
+
+# knitr::kable(ot[7,], digits = 2, caption = "Rank ordered Mean % Reduction in Burden (HP01)") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
 
 ### Cumulative Hosps
 ```{r hosp_1, warning=FALSE, message = FALSE}
 file.type = file.types[2]
 tab_HP01 <- read_ill(scn = "HP01_")
+all.peak.weeks <- data.frame(`HP01` = as.integer(gsub("Week", "", peak.week$V2)))
+rownames(all.peak.weeks) <- peak.week$V1
 
 # Cumulative Hosps
 cml <- data.frame(`HP01` = tab_HP01$Cml)
@@ -267,8 +365,9 @@ rownames(peak) <- tab_HP01$team
 
 scenario <- "HP02_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP02 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP02 <- long$Cml
 
 # Peak Magnitude
@@ -276,8 +375,9 @@ peak$HP02 = long$Peak.Magnitude
 
 scenario <- "HP03_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP03 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP03 <- long$Cml
 
 # Peak Magnitude
@@ -285,8 +385,9 @@ peak$HP03 = long$Peak.Magnitude
 
 scenario <- "HP04_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP04 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP04 <- long$Cml
 
 # Peak Magnitude
@@ -294,8 +395,9 @@ peak$HP04 = long$Peak.Magnitude
 
 scenario <- "HP05_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP05 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP05 <- long$Cml
 
 # Peak Magnitude
@@ -303,8 +405,9 @@ peak$HP05 = long$Peak.Magnitude
 
 scenario <- "HP06_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP06 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP06 <- long$Cml
 
 # Peak Magnitude
@@ -312,8 +415,9 @@ peak$HP06 = long$Peak.Magnitude
 
 scenario <- "HP07_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP07 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP07 <- long$Cml
 
 # Peak Magnitude
@@ -321,8 +425,9 @@ peak$HP07 = long$Peak.Magnitude
 
 scenario <- "HP08_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP08 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP08 <- long$Cml
 
 # Peak Magnitude
@@ -330,8 +435,9 @@ peak$HP08 = long$Peak.Magnitude
 
 scenario <- "HP09_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP09 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP09 <- long$Cml
 
 # Peak Magnitude
@@ -339,8 +445,9 @@ peak$HP09 = long$Peak.Magnitude
 
 scenario <- "HP10_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP10 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP10 <- long$Cml
 
 # Peak Magnitude
@@ -348,8 +455,9 @@ peak$HP10 = long$Peak.Magnitude
 
 scenario <- "HP11_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP11 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP11 <- long$Cml
 
 # Peak Magnitude
@@ -357,8 +465,9 @@ peak$HP11 = long$Peak.Magnitude
 
 scenario <- "HP12_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP12 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Hospitalizations per 100K
+# Cumulative Hosps
 cml$HP12 <- long$Cml
 
 # Peak Magnitude
@@ -375,6 +484,42 @@ knitr::kable(cml, digits = 2, caption = "Cumulative Hospitalizations per 100K") 
 knitr::kable(peak, digits = 2, caption = "Peak Hospitalizations per 100K") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+peak_reduction <- data.frame(HP02 = (peak$HP01 - peak$HP02)/peak$HP01,
+                             HP03 = (peak$HP01 - peak$HP03)/peak$HP01,
+                             HP04 = (peak$HP01 - peak$HP04)/peak$HP01,
+                             HP05 = (peak$HP01 - peak$HP05)/peak$HP01,
+                             HP06 = (peak$HP01 - peak$HP06)/peak$HP01,
+                             HP07 = (peak$HP01 - peak$HP07)/peak$HP01,
+                             HP08 = (peak$HP01 - peak$HP08)/peak$HP01,
+                             HP09 = (peak$HP01 - peak$HP09)/peak$HP01,
+                             HP10 = (peak$HP01 - peak$HP10)/peak$HP01,
+                             HP11 = (peak$HP01 - peak$HP11)/peak$HP01,
+                             HP12 = (peak$HP01 - peak$HP12)/peak$HP01)
+rownames(peak_reduction) <- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = "% Reduction in Peak Hospitalizations per 100K (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = "Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+##Peak Delay
+peak_delay <- data.frame(HP02 = -(all.peak.weeks$HP01 - all.peak.weeks$HP02),
+                             HP03 = -(all.peak.weeks$HP01 - all.peak.weeks$HP03),
+                             HP04 = -(all.peak.weeks$HP01 - all.peak.weeks$HP04),
+                             HP05 = -(all.peak.weeks$HP01 - all.peak.weeks$HP05),
+                             HP06 = -(all.peak.weeks$HP01 - all.peak.weeks$HP06),
+                             HP07 = -(all.peak.weeks$HP01 - all.peak.weeks$HP07),
+                             HP08 = -(all.peak.weeks$HP01 - all.peak.weeks$HP08),
+                             HP09 = -(all.peak.weeks$HP01 - all.peak.weeks$HP09),
+                             HP10 = -(all.peak.weeks$HP01 - all.peak.weeks$HP10),
+                             HP11 = -(all.peak.weeks$HP01 - all.peak.weeks$HP11),
+                             HP12 = -(all.peak.weeks$HP01 - all.peak.weeks$HP12))
+rownames(peak_delay) <- rownames(peak_reduction)
+knitr::kable(peak_delay, digits = 2, caption = "Delay in Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
 
@@ -393,14 +538,56 @@ knitr::kable(w, digits = 2, caption = "% Reduction in Burden (HP01)") %>%
 
 ```
 
+```{r hosp_4, warning=FALSE, message=FALSE}
+t <- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
 
+dt <- as.data.frame(t)
+rownames(dt) <- w$team
+colnames(dt) <- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 2, caption = "Rank Order of % Reduction in Burden (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+a <- read.csv("./Hospitalizations_age_EPI1.csv")
+a$scenario <- sub("_", "", a$scenario)
+
+w <- spread(a[2:5], key = "scenario", value = "reduction")
+
+knitr::kable(w[2:13], digits = 2, caption = "% Reduction in Burden by Age (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  pack_rows(index = table(w$team))
+```
+
+```{r hosp_5, warning=FALSE, message=FALSE}
+# t <- as.data.frame(t(w[,2:12]))
+# colnames(t) <- w$team
+# t$mean <- rowMeans(t)
+# t$team <- rownames(t)
+# 
+# o <- arrange(t, mean)
+# rownames(o) <- o$team
+# 
+# ot <- as.data.frame(t(o[,1:7]))
+
+# knitr::kable(ot[7,], digits = 2, caption = "Rank ordered Mean % Reduction in Burden (HP01)") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
 
 ### Cumulative Deaths
 ```{r death_1, warning=FALSE, message = FALSE}
 file.type = file.types[3]
 tab_HP01 <- read_ill(scn = "HP01_")
+all.peak.weeks <- data.frame(`HP01` = as.integer(gsub("Week", "", peak.week$V2)))
+rownames(all.peak.weeks) <- peak.week$V1
 
-# Cumulative Hosps
+# Cumulative Deaths
 cml <- data.frame(`HP01` = tab_HP01$Cml)
 
 # Peak Magnitude
@@ -411,8 +598,9 @@ rownames(peak) <- tab_HP01$team
 
 scenario <- "HP02_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP02 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP02 <- long$Cml
 
 # Peak Magnitude
@@ -420,8 +608,9 @@ peak$HP02 = long$Peak.Magnitude
 
 scenario <- "HP03_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP03 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP03 <- long$Cml
 
 # Peak Magnitude
@@ -429,8 +618,9 @@ peak$HP03 = long$Peak.Magnitude
 
 scenario <- "HP04_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP04 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP04 <- long$Cml
 
 # Peak Magnitude
@@ -438,8 +628,9 @@ peak$HP04 = long$Peak.Magnitude
 
 scenario <- "HP05_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP05 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP05 <- long$Cml
 
 # Peak Magnitude
@@ -447,8 +638,9 @@ peak$HP05 = long$Peak.Magnitude
 
 scenario <- "HP06_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP06 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP06 <- long$Cml
 
 # Peak Magnitude
@@ -456,8 +648,9 @@ peak$HP06 = long$Peak.Magnitude
 
 scenario <- "HP07_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP07 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP07 <- long$Cml
 
 # Peak Magnitude
@@ -465,8 +658,9 @@ peak$HP07 = long$Peak.Magnitude
 
 scenario <- "HP08_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP08 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP08 <- long$Cml
 
 # Peak Magnitude
@@ -474,8 +668,9 @@ peak$HP08 = long$Peak.Magnitude
 
 scenario <- "HP09_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP09 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP09 <- long$Cml
 
 # Peak Magnitude
@@ -483,8 +678,9 @@ peak$HP09 = long$Peak.Magnitude
 
 scenario <- "HP10_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP10 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP10 <- long$Cml
 
 # Peak Magnitude
@@ -492,8 +688,9 @@ peak$HP10 = long$Peak.Magnitude
 
 scenario <- "HP11_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP11 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP11 <- long$Cml
 
 # Peak Magnitude
@@ -501,8 +698,9 @@ peak$HP11 = long$Peak.Magnitude
 
 scenario <- "HP12_"
 long <- read_ill(scn = scenario)
+all.peak.weeks$HP12 = as.integer(gsub("Week", "", peak.week$V2))
 
-# Cumulative Deaths per 100K
+# Cumulative Deaths
 cml$HP12 <- long$Cml
 
 # Peak Magnitude
@@ -519,6 +717,42 @@ knitr::kable(cml, digits = 2, caption = "Cumulative Deaths per 100K") %>%
 knitr::kable(peak, digits = 2, caption = "Peak Deaths per 100K") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
 
+peak_reduction <- data.frame(HP02 = (peak$HP01 - peak$HP02)/peak$HP01,
+                             HP03 = (peak$HP01 - peak$HP03)/peak$HP01,
+                             HP04 = (peak$HP01 - peak$HP04)/peak$HP01,
+                             HP05 = (peak$HP01 - peak$HP05)/peak$HP01,
+                             HP06 = (peak$HP01 - peak$HP06)/peak$HP01,
+                             HP07 = (peak$HP01 - peak$HP07)/peak$HP01,
+                             HP08 = (peak$HP01 - peak$HP08)/peak$HP01,
+                             HP09 = (peak$HP01 - peak$HP09)/peak$HP01,
+                             HP10 = (peak$HP01 - peak$HP10)/peak$HP01,
+                             HP11 = (peak$HP01 - peak$HP11)/peak$HP01,
+                             HP12 = (peak$HP01 - peak$HP12)/peak$HP01)
+rownames(peak_reduction) <- rownames(peak)
+
+knitr::kable(peak_reduction*100, digits = 2, caption = "% Reduction in Peak Deaths per 100K (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+##Peak Week 
+knitr::kable(all.peak.weeks, digits = 2, caption = "Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+##Peak Delay
+peak_delay <- data.frame(HP02 = -(all.peak.weeks$HP01 - all.peak.weeks$HP02),
+                             HP03 = -(all.peak.weeks$HP01 - all.peak.weeks$HP03),
+                             HP04 = -(all.peak.weeks$HP01 - all.peak.weeks$HP04),
+                             HP05 = -(all.peak.weeks$HP01 - all.peak.weeks$HP05),
+                             HP06 = -(all.peak.weeks$HP01 - all.peak.weeks$HP06),
+                             HP07 = -(all.peak.weeks$HP01 - all.peak.weeks$HP07),
+                             HP08 = -(all.peak.weeks$HP01 - all.peak.weeks$HP08),
+                             HP09 = -(all.peak.weeks$HP01 - all.peak.weeks$HP09),
+                             HP10 = -(all.peak.weeks$HP01 - all.peak.weeks$HP10),
+                             HP11 = -(all.peak.weeks$HP01 - all.peak.weeks$HP11),
+                             HP12 = -(all.peak.weeks$HP01 - all.peak.weeks$HP12))
+rownames(peak_delay) <- rownames(peak_reduction)
+knitr::kable(peak_delay, digits = 2, caption = "Delay in Peak Week") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
 ### % Reduction in Deaths
@@ -536,6 +770,46 @@ knitr::kable(w, digits = 2, caption = "% Reduction in Burden (HP01)") %>%
 
 ```
 
+```{r death_4, warning=FALSE, message=FALSE}
+t <- rbind(rank(-w[1,2:12]),
+          rank(-w[2,2:12]),
+          rank(-w[3,2:12]),
+          rank(-w[4,2:12]),
+          rank(-w[5,2:12]),
+          rank(-w[6,2:12]))
+
+dt <- as.data.frame(t)
+rownames(dt) <- w$team
+colnames(dt) <- colnames(w)[2:12]
+
+knitr::kable(dt, digits = 2, caption = "Rank Order of % Reduction in Burden (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+a <- read.csv("./Deaths_age_EPI1.csv")
+a$scenario <- sub("_", "", a$scenario)
+
+w <- spread(a[2:5], key = "scenario", value = "reduction")
+
+knitr::kable(w[2:13], digits = 2, caption = "% Reduction in Burden by Age (HP01)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  pack_rows(index = table(w$team))
+```
+
+```{r death_5, warning=FALSE, message=FALSE}
+# t <- as.data.frame(t(w[,2:12]))
+# colnames(t) <- w$team
+# t$mean <- rowMeans(t)
+# t$team <- rownames(t)
+# 
+# o <- arrange(t, mean)
+# rownames(o) <- o$team
+# 
+# ot <- as.data.frame(t(o[,1:7]))
+
+# knitr::kable(ot[7,], digits = 2, caption = "Rank ordered Mean % Reduction in Burden (HP01)") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
 
 ### Cumulative % Antivirals
 ```{r av_1, warning=FALSE, message = FALSE}
