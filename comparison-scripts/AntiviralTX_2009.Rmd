@@ -31,8 +31,8 @@ library(kableExtra)
 
 path <- "../model-forecasts/"
 
-team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/")
-team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU")
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/", "Northeastern/RL3/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU", "NEU")
 file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
 
 read_overall_mean <- function(scn){
@@ -44,7 +44,7 @@ read_overall_mean <- function(scn){
                                        s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
-  for(i in 2:7){
+  for(i in 2:8){
     
     if(i == 4){
       scn = gsub("RL", "RL_", scn)
@@ -68,6 +68,9 @@ read_overall_mean <- function(scn){
       }
       if(i == 7){
         team.abbrev[i] = "NEU2"
+      }
+      if(i == 8){
+        team.abbrev[i] = "NEU3"
       }
       antivirals <- rbind.fill(antivirals, 
                                data.frame(c(s[which(s$Agegroup == "Overall" & 
@@ -120,8 +123,8 @@ knitr::kable(table[5:7], digits = 2, caption = "RL03: AntiviralTX", align=rep('c
 
 
 #Bar charts for age
-team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/")
-team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU")
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/", "Northeastern/RL3/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU", "NEU")
 file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
 
 read_ages <- function(scn){
@@ -133,7 +136,7 @@ read_ages <- function(scn){
                                        s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
-  for(i in 2:7){
+  for(i in 2:8){
     
     if(i == 4){
       scn = gsub("RL", "RL_", scn)
@@ -157,6 +160,9 @@ read_ages <- function(scn){
       }
       if(i == 7){
         team.abbrev[i] = "NEU2"
+      }
+      if(i == 8){
+        team.abbrev[i] = "NEU3"
       }
       antivirals <- rbind.fill(antivirals, 
                                data.frame(c(s[which(s$Agegroup != "Overall" & 

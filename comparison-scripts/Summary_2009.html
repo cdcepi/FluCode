@@ -476,8 +476,8 @@ library(scales)
 
 path &lt;- &quot;../model-forecasts/&quot;
 
-team.folder &lt;- c(&quot;Columbia/COL/RL/&quot;, &quot;Northeastern/RL/&quot;, &quot;UTAustin/&quot;, &quot;UVirginia/&quot;, &quot;Imperial/&quot;, &quot;Columbia/COL2/RL/&quot;, &quot;Northeastern/RL2/&quot;)
-team.abbrev &lt;- c(&quot;COL&quot;, &quot;NEU&quot;, &quot;UTA&quot;, &quot;UVA&quot;, &quot;IMP&quot;, &quot;COL2&quot;, &quot;NEU&quot;)
+team.folder &lt;- c(&quot;Columbia/COL/RL/&quot;, &quot;Northeastern/RL/&quot;, &quot;UTAustin/&quot;, &quot;UVirginia/&quot;, &quot;Imperial/&quot;, &quot;Columbia/COL2/RL/&quot;, &quot;Northeastern/RL2/&quot;, &quot;Northeastern/RL3/&quot;)
+team.abbrev &lt;- c(&quot;COL&quot;, &quot;NEU&quot;, &quot;UTA&quot;, &quot;UVA&quot;, &quot;IMP&quot;, &quot;COL2&quot;, &quot;NEU&quot;, &quot;NEU&quot;)
 file.types &lt;- c(&quot;SymIllness&quot;, &quot;Hosp&quot;, &quot;Deaths&quot;, &quot;AntiviralTX&quot;)
 
 file.type &lt;- file.types[1]
@@ -494,7 +494,7 @@ read_ill &lt;- function(scn){
   df_sub &lt;- select(symillness, contains(&quot;Week&quot;))
   peak.week&lt;- c(team.abbrev[1], colnames(df_sub)[which.max(df_sub)])
   
-  for(i in 2:7){
+  for(i in 2:8){
     
     if(i == 4){
       scn = gsub(&quot;RL&quot;, &quot;RL_&quot;, scn)
@@ -524,6 +524,9 @@ read_ill &lt;- function(scn){
       }
       if(i == 7){
         team.abbrev[i] = &quot;NEU2&quot;
+      }
+      if(i == 8){
+        team.abbrev[i] = &quot;NEU3&quot;
       }
       u &lt;- data.frame(c(s[which(s$Agegroup == &quot;Overall&quot; &amp; 
                                   s$Bin_cml %in% cols),],`team` = team.abbrev[i]))
@@ -867,6 +870,35 @@ NEU2
 12.69
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+17.41
+</td>
+<td style="text-align:right;">
+16.80
+</td>
+<td style="text-align:right;">
+17.31
+</td>
+<td style="text-align:right;">
+15.74
+</td>
+<td style="text-align:right;">
+11.89
+</td>
+<td style="text-align:right;">
+17.39
+</td>
+<td style="text-align:right;">
+10.65
+</td>
+<td style="text-align:right;">
+7.11
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1112,6 +1144,35 @@ NEU2
 1.15
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+2.28
+</td>
+<td style="text-align:right;">
+2.27
+</td>
+<td style="text-align:right;">
+2.32
+</td>
+<td style="text-align:right;">
+2.01
+</td>
+<td style="text-align:right;">
+1.13
+</td>
+<td style="text-align:right;">
+2.28
+</td>
+<td style="text-align:right;">
+1.10
+</td>
+<td style="text-align:right;">
+0.64
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>peak_reduction &lt;- data.frame(RL02 = (peak$RL01 - peak$RL02)/peak$RL01,
@@ -1339,6 +1400,32 @@ NEU2
 57.68
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+<td style="text-align:right;">
+-1.47
+</td>
+<td style="text-align:right;">
+12.01
+</td>
+<td style="text-align:right;">
+50.67
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+51.73
+</td>
+<td style="text-align:right;">
+71.96
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>##Peak Week 
@@ -1556,6 +1643,35 @@ COL2
 <tr>
 <td style="text-align:left;">
 NEU2
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
 </td>
 <td style="text-align:right;">
 14
@@ -1809,6 +1925,32 @@ NEU2
 10
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1986,6 +2128,32 @@ NEU2
 </tr>
 <tr>
 <td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+3.49
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+<td style="text-align:right;">
+9.62
+</td>
+<td style="text-align:right;">
+31.73
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+38.83
+</td>
+<td style="text-align:right;">
+59.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 UTA
 </td>
 <td style="text-align:right;">
@@ -2044,7 +2212,8 @@ UVA
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt &lt;- as.data.frame(t)
 rownames(dt) &lt;- w$team
@@ -2206,6 +2375,32 @@ NEU2
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+7
 </td>
 <td style="text-align:right;">
 2
@@ -2986,6 +3181,141 @@ RL08
 </tr>
 <tr grouplength="5">
 <td colspan="8" style="border-bottom: 1px solid;">
+<strong>NEU3</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+3.69
+</td>
+<td style="text-align:right;">
+1.48
+</td>
+<td style="text-align:right;">
+10.96
+</td>
+<td style="text-align:right;">
+34.99
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+42.03
+</td>
+<td style="text-align:right;">
+61.76
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.46
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+<td style="text-align:right;">
+9.62
+</td>
+<td style="text-align:right;">
+27.79
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+36.02
+</td>
+<td style="text-align:right;">
+56.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+3.73
+</td>
+<td style="text-align:right;">
+-0.24
+</td>
+<td style="text-align:right;">
+8.39
+</td>
+<td style="text-align:right;">
+44.36
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+47.84
+</td>
+<td style="text-align:right;">
+68.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.24
+</td>
+<td style="text-align:right;">
+1.08
+</td>
+<td style="text-align:right;">
+10.02
+</td>
+<td style="text-align:right;">
+25.21
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+33.73
+</td>
+<td style="text-align:right;">
+53.48
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+3.37
+</td>
+<td style="text-align:right;">
+2.42
+</td>
+<td style="text-align:right;">
+11.97
+</td>
+<td style="text-align:right;">
+27.90
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+36.64
+</td>
+<td style="text-align:right;">
+55.41
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="8" style="border-bottom: 1px solid;">
 <strong>UTA</strong>
 </td>
 </tr>
@@ -3595,6 +3925,35 @@ NEU2
 59.98
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+182.25
+</td>
+<td style="text-align:right;">
+176.07
+</td>
+<td style="text-align:right;">
+179.12
+</td>
+<td style="text-align:right;">
+162.37
+</td>
+<td style="text-align:right;">
+130.18
+</td>
+<td style="text-align:right;">
+182.00
+</td>
+<td style="text-align:right;">
+114.93
+</td>
+<td style="text-align:right;">
+79.38
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3840,6 +4199,35 @@ NEU2
 5.14
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+23.29
+</td>
+<td style="text-align:right;">
+23.18
+</td>
+<td style="text-align:right;">
+23.66
+</td>
+<td style="text-align:right;">
+20.40
+</td>
+<td style="text-align:right;">
+12.28
+</td>
+<td style="text-align:right;">
+23.26
+</td>
+<td style="text-align:right;">
+11.91
+</td>
+<td style="text-align:right;">
+6.88
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>peak_reduction &lt;- data.frame(RL02 = (peak$RL01 - peak$RL02)/peak$RL01,
@@ -4065,6 +4453,32 @@ NEU2
 </td>
 <td style="text-align:right;">
 57.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+-1.63
+</td>
+<td style="text-align:right;">
+12.39
+</td>
+<td style="text-align:right;">
+47.25
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+48.86
+</td>
+<td style="text-align:right;">
+70.45
 </td>
 </tr>
 </tbody>
@@ -4310,6 +4724,35 @@ NEU2
 24
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+25
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>#Peak delay
@@ -4537,6 +4980,32 @@ NEU2
 10
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4715,6 +5184,32 @@ NEU2
 </tr>
 <tr>
 <td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+3.39
+</td>
+<td style="text-align:right;">
+1.72
+</td>
+<td style="text-align:right;">
+10.91
+</td>
+<td style="text-align:right;">
+28.57
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+36.94
+</td>
+<td style="text-align:right;">
+56.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 UTA
 </td>
 <td style="text-align:right;">
@@ -4773,7 +5268,8 @@ UVA
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt &lt;- as.data.frame(t)
 rownames(dt) &lt;- w$team
@@ -4935,6 +5431,32 @@ NEU2
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+7
 </td>
 <td style="text-align:right;">
 2
@@ -5715,6 +6237,141 @@ RL08
 </tr>
 <tr grouplength="5">
 <td colspan="8" style="border-bottom: 1px solid;">
+<strong>NEU3</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+3.68
+</td>
+<td style="text-align:right;">
+1.69
+</td>
+<td style="text-align:right;">
+11.10
+</td>
+<td style="text-align:right;">
+34.89
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+42.11
+</td>
+<td style="text-align:right;">
+61.76
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.44
+</td>
+<td style="text-align:right;">
+0.76
+</td>
+<td style="text-align:right;">
+9.80
+</td>
+<td style="text-align:right;">
+27.68
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+36.12
+</td>
+<td style="text-align:right;">
+56.66
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+3.72
+</td>
+<td style="text-align:right;">
+-0.09
+</td>
+<td style="text-align:right;">
+8.52
+</td>
+<td style="text-align:right;">
+44.24
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+47.87
+</td>
+<td style="text-align:right;">
+68.55
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.24
+</td>
+<td style="text-align:right;">
+1.35
+</td>
+<td style="text-align:right;">
+10.20
+</td>
+<td style="text-align:right;">
+25.11
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+33.85
+</td>
+<td style="text-align:right;">
+53.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+3.36
+</td>
+<td style="text-align:right;">
+2.65
+</td>
+<td style="text-align:right;">
+12.13
+</td>
+<td style="text-align:right;">
+27.80
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+36.73
+</td>
+<td style="text-align:right;">
+55.43
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="8" style="border-bottom: 1px solid;">
 <strong>UTA</strong>
 </td>
 </tr>
@@ -6324,6 +6981,35 @@ NEU2
 2.79
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+20.25
+</td>
+<td style="text-align:right;">
+19.57
+</td>
+<td style="text-align:right;">
+18.57
+</td>
+<td style="text-align:right;">
+16.80
+</td>
+<td style="text-align:right;">
+14.65
+</td>
+<td style="text-align:right;">
+20.22
+</td>
+<td style="text-align:right;">
+12.07
+</td>
+<td style="text-align:right;">
+8.44
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6569,6 +7255,35 @@ NEU2
 0.24
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+2.57
+</td>
+<td style="text-align:right;">
+2.55
+</td>
+<td style="text-align:right;">
+2.44
+</td>
+<td style="text-align:right;">
+2.10
+</td>
+<td style="text-align:right;">
+1.38
+</td>
+<td style="text-align:right;">
+2.56
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>peak_reduction &lt;- data.frame(RL02 = (peak$RL01 - peak$RL02)/peak$RL01,
@@ -6794,6 +7509,32 @@ NEU2
 </td>
 <td style="text-align:right;">
 60.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+<td style="text-align:right;">
+5.02
+</td>
+<td style="text-align:right;">
+18.30
+</td>
+<td style="text-align:right;">
+46.41
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+51.45
+</td>
+<td style="text-align:right;">
+71.60
 </td>
 </tr>
 </tbody>
@@ -7039,6 +7780,35 @@ NEU2
 24
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+25
+</td>
+</tr>
 </tbody>
 </table>
 <pre class="r"><code>#Peak delay
@@ -7266,6 +8036,32 @@ NEU2
 10
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -7444,6 +8240,32 @@ NEU2
 </tr>
 <tr>
 <td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+3.36
+</td>
+<td style="text-align:right;">
+8.29
+</td>
+<td style="text-align:right;">
+17.02
+</td>
+<td style="text-align:right;">
+27.67
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+40.41
+</td>
+<td style="text-align:right;">
+58.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 UTA
 </td>
 <td style="text-align:right;">
@@ -7502,7 +8324,8 @@ UVA
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt &lt;- as.data.frame(t)
 rownames(dt) &lt;- w$team
@@ -7649,6 +8472,32 @@ NEU
 <tr>
 <td style="text-align:left;">
 NEU2
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
 </td>
 <td style="text-align:right;">
 6
@@ -8444,6 +9293,141 @@ RL08
 </tr>
 <tr grouplength="5">
 <td colspan="8" style="border-bottom: 1px solid;">
+<strong>NEU3</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+0-4 years
+</td>
+<td style="text-align:right;">
+3.68
+</td>
+<td style="text-align:right;">
+10.49
+</td>
+<td style="text-align:right;">
+19.07
+</td>
+<td style="text-align:right;">
+34.87
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+47.28
+</td>
+<td style="text-align:right;">
+65.18
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+18-49 years
+</td>
+<td style="text-align:right;">
+3.45
+</td>
+<td style="text-align:right;">
+6.91
+</td>
+<td style="text-align:right;">
+15.39
+</td>
+<td style="text-align:right;">
+27.68
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+40.07
+</td>
+<td style="text-align:right;">
+59.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+5-17 years
+</td>
+<td style="text-align:right;">
+3.72
+</td>
+<td style="text-align:right;">
+8.90
+</td>
+<td style="text-align:right;">
+16.71
+</td>
+<td style="text-align:right;">
+44.24
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+52.55
+</td>
+<td style="text-align:right;">
+71.36
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+50-64 years
+</td>
+<td style="text-align:right;">
+3.22
+</td>
+<td style="text-align:right;">
+7.45
+</td>
+<td style="text-align:right;">
+15.77
+</td>
+<td style="text-align:right;">
+25.10
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+37.94
+</td>
+<td style="text-align:right;">
+56.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left; padding-left: 2em;" indentlevel="1">
+65+ years
+</td>
+<td style="text-align:right;">
+3.35
+</td>
+<td style="text-align:right;">
+8.74
+</td>
+<td style="text-align:right;">
+17.62
+</td>
+<td style="text-align:right;">
+27.77
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+40.67
+</td>
+<td style="text-align:right;">
+58.19
+</td>
+</tr>
+<tr grouplength="5">
+<td colspan="8" style="border-bottom: 1px solid;">
 <strong>UTA</strong>
 </td>
 </tr>
@@ -8912,6 +9896,23 @@ NEU2
 1.40
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+1.94
+</td>
+<td style="text-align:right;">
+1.77
+</td>
+<td style="text-align:right;">
+1.18
+</td>
+<td style="text-align:right;">
+0.78
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -9059,6 +10060,23 @@ NEU2
 </td>
 <td style="text-align:right;">
 0.13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEU3
+</td>
+<td style="text-align:right;">
+0.26
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.07
 </td>
 </tr>
 </tbody>

@@ -41,8 +41,8 @@ library(scales)
 
 path <- "../model-forecasts/"
 
-team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/")
-team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU")
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/", "Northeastern/RL3/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU", "NEU")
 file.types <- c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
 
 file.type <- file.types[1]
@@ -59,7 +59,7 @@ read_ill <- function(scn){
   df_sub <- select(symillness, contains("Week"))
   peak.week<- c(team.abbrev[1], colnames(df_sub)[which.max(df_sub)])
   
-  for(i in 2:7){
+  for(i in 2:8){
     
     if(i == 4){
       scn = gsub("RL", "RL_", scn)
@@ -89,6 +89,9 @@ read_ill <- function(scn){
       }
       if(i == 7){
         team.abbrev[i] = "NEU2"
+      }
+      if(i == 8){
+        team.abbrev[i] = "NEU3"
       }
       u <- data.frame(c(s[which(s$Agegroup == "Overall" & 
                                   s$Bin_cml %in% cols),],`team` = team.abbrev[i]))
@@ -265,7 +268,8 @@ t <- rbind(rank(-w[1,2:8]),
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt <- as.data.frame(t)
 rownames(dt) <- w$team
@@ -451,7 +455,8 @@ t <- rbind(rank(-w[1,2:8]),
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt <- as.data.frame(t)
 rownames(dt) <- w$team
@@ -637,7 +642,8 @@ t <- rbind(rank(-w[1,2:8]),
           rank(-w[4,2:8]),
           rank(-w[5,2:8]),
           rank(-w[6,2:8]),
-          rank(-w[7,2:8]))
+          rank(-w[7,2:8]),
+          rank(-w[8,2:8]))
 
 dt <- as.data.frame(t)
 rownames(dt) <- w$team
