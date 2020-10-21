@@ -30,8 +30,8 @@ for(t in team.folder){
   for(l in list){
     r <- read.csv(paste0(path, t, l))
     r <- as.data.frame(r)
-    invalid <- sapply(r, function(x) ifelse(any(is.nan(x)), NA, x))
-    if(invalid){
+    invalid <- sum(is.na(r))
+    if(invalid > 0){
       print(paste0(path, t, l))
     }
   }
@@ -58,8 +58,8 @@ for(t in team.folder){
   for(l in list){
     r <- read.csv(paste0(path, t, l))
     r <- as.data.frame(r)
-    invalid <- sapply(r, function(x) ifelse(any(is.nan(x)), NA, x))
-    if(invalid){
+    invalid <- sum(is.nan(as.matrix(r)))
+    if(invalid > 0){
       print(paste0(path, t, l))
     }
   }
