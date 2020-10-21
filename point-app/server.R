@@ -192,39 +192,40 @@ getPIPlots <- function(d, max.limit = 0, week = 'Peak.Magnitude', pTitle=''){
   return(p)
 }
 
-# getPeakPlots  <- function(d, pTitle=''){
-#   if(is.null(d) | nrow(d) == 0)
-#     return(ggplot(d) + geom_blank() + theme_bw())
-#   
-#   
-#   d <- melt(d[Bin == 'sm.peak'], id.vars = c('Agegroup', 'Scenario', 'Version'), 
-#             measure.vars = paste0('Week', 1:52),
-#             variable.name = 'week', value.name = 'value')
-#   
-#   d$week <- factor(d$week, levels = paste0('Week', 1:52), labels = subWeeks)
-#   
-#   d[value < 5e-5]$value <- NA
-#   d$value = round(d$value, 4)
-#   
-#   p <- ggplot(d) +
-#     geom_raster(aes(x = as.integer(week), y = factor(Version), fill = log(value)), alpha=.5, na.rm = T) +
-#     scale_fill_gradient(low = 'yellow', high = 'red', na.value = 'white') +
-#     facet_wrap(~Scenario, ncol = 8) +
-#     scale_x_continuous(breaks = seq(1, 52, 4), labels = subWeeks[seq(1, 52, 4)]) +
-#     theme_bw() + labs(x = 'Week', y = 'Model', fill = 'P, log', title = pTitle) +
-#     theme(axis.title = element_text(size=12), strip.text = element_text(size=10),
-#           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
-#           axis.text.x = element_text(size=8, hjust = 1, vjust = .5, angle=90),
-#           axis.text.y = element_text(size=10), legend.position = 'bottom')
-#   
-#   return(p)
-# }
+getPeakPlots  <- function(d, pTitle=''){
+  if(is.null(d) | nrow(d) == 0)
+    return(ggplot(d) + geom_blank() + theme_bw())
+
+
+  d <- melt(d[grepl('peak', tolower(Bin)) | grepl('peak', tolower(Bin_cml))], id.vars = c('Agegroup', 'Scenario', 'Version'),
+            measure.vars = paste0('Week', 1:52),
+            variable.name = 'week', value.name = 'value')
+
+  d$week <- factor(d$week, levels = paste0('Week', 1:52), labels = subWeeks)
+
+  d[value < 5e-5]$value <- NA
+  d$value = round(d$value, 4)
+
+  p <- ggplot(d) +
+    geom_tile(aes(x = as.integer(week), y = factor(Version), fill = log(value)), alpha=.5, na.rm = T) +
+    scale_fill_gradient(low = 'yellow', high = 'red', na.value = 'white') +
+    facet_wrap(~Scenario, ncol = 8) +
+    scale_x_continuous(breaks = seq(1, 52, 6), labels = subWeeks[seq(1, 52, 6)]) +
+    theme_bw() + labs(x = 'Week', y = 'Model', fill = 'P, log', title = pTitle) +
+    theme(axis.title = element_text(size=12), strip.text = element_text(size=10),
+          panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
+          axis.text.x = element_text(size=8, hjust = 1, vjust = .5, angle=90),
+          axis.text.y = element_text(size=10), legend.position = 'bottom')
+
+  return(p)
+}
 
 #############
 
 baseDir <- '../model-forecasts/'
 d <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
 d.diff <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
+d.diff.rank <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
 
 # weeks of projections
 subWeeks <- paste0('W', formatC(1:52, flag = '0', width=2))
@@ -239,7 +240,7 @@ reqColors = c('orange', 'red', 'blue', 'darkgreen', 'darkgrey', 'purple')
 # Define server logic 
 shinyServer(function(input, output, session) {
   for(f in list.files(baseDir, '.csv', recursive = T)){
-    if(grepl('Northeastern/RL/', f))
+    if(grepl('Northeastern/RL/', f) | grepl('Northeastern/RL2/', f))
       next
     
     print(f)
@@ -277,7 +278,7 @@ shinyServer(function(input, output, session) {
     
     dSub$Type = type
     
-    d[[type]] <<- rbind(d[[type]], dSub[grepl('sm.', Bin)])
+    d[[type]] <<- rbind(d[[type]], dSub[grepl('sm.', Bin) | grepl('sm.', Bin_cml) | grepl('Peak', Bin_cml)])
     
   }
   
@@ -373,21 +374,21 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  # #tab3
-  # output$peakPlot <- renderPlot({
-  #   reqGrp <- input$grp
-  #   reqType <- reqTypeMap[name == input$outcome]$type
-  #   
-  #   reqGrp <- gsub('years', '', reqGrp) %>% trimws
-  #   
-  #   if(any(sapply(d, function(x) !is.null(x)))){
-  #     dSub <- d[[reqType]]
-  #     dSub <- dSub[Agegroup == reqGrp]  # & Version %in% reqVersions
-  #     
-  #     if(nrow(dSub) > 0)
-  #       getPeakPlots(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
-  #   }
-  # })
+  #tab3
+  output$peakPlot <- renderPlot({
+    reqGrp <- input$grp
+    reqType <- reqTypeMap[name == input$outcome]$type
+
+    reqGrp <- gsub('years', '', reqGrp) %>% trimws
+
+    if(any(sapply(d, function(x) !is.null(x)))){
+      dSub <- d[[reqType]]
+      dSub <- dSub[Agegroup == reqGrp]  # & Version %in% reqVersions
+
+      if(nrow(dSub) > 0)
+        getPeakPlots(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+    }
+  })
   
   #tab4
   output$trajPlot <- renderPlot({
