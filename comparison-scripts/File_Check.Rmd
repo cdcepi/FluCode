@@ -30,10 +30,12 @@ for(t in team.folder){
   for(l in list){
     r <- read.csv(paste0(path, t, l))
     r <- as.data.frame(r)
-    invalid <- sum(is.na(r))
-    if(invalid > 0){
-      print(paste0(path, t, l))
+    invalid <- apply(r, 2, function(x) any(is.na(x)))
+    invalid <- invalid[!(names(invalid) %in% c('Cml', 'Peak.Magnitude'))]
+    if(sum(invalid) > 0){
+      print(paste0('NA >> ', path, t, l))
     }
+
   }
   
 }
