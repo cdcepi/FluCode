@@ -19,10 +19,10 @@ getScenarioType <- function(scn){
 
 getMaxBin <- function(type, is.cml = F){
   limit = switch(type,
-         ill = 20,
-         hosp = 60,
-         mort = 6,
-         meds = 40)
+                 ill = 20,
+                 hosp = 60,
+                 mort = 6,
+                 meds = 40)
   
   if(is.cml)
     limit = limit*2
@@ -38,7 +38,18 @@ getType <- function(x){
   else NULL
 }
 
-getIncPlots <- function(d, pTitle=''){
+getCols <- function(scn){
+  if(scn == 'RL'){
+    4
+  } else if(scn == 'HP'){
+    6
+  } else(
+    8
+  )
+}
+
+
+getIncPlots <- function(d, reqScn, pTitle=''){
   if(is.null(d) | nrow(d) == 0)
     return(ggplot(d) + geom_blank() + theme_bw())
   
@@ -58,7 +69,7 @@ getIncPlots <- function(d, pTitle=''){
     scale_color_manual(values = reqColors) +
     scale_fill_manual(values = reqColors) +
     scale_x_continuous(breaks = seq(1, 52, 6), labels = subWeeks[seq(1, 52, 6)]) +
-    facet_wrap(~scenario, ncol=8, scales = 'free_y') + 
+    facet_wrap(~scenario, ncol=getCols(reqScn), scales = 'free_y') + 
     theme_bw() + labs(y = 'Estimate', x = 'Week', title = pTitle) +
     theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
@@ -68,7 +79,7 @@ getIncPlots <- function(d, pTitle=''){
   return(p)
 }
 
-# getIncPlotsDiff <- function(d, pTitle=''){
+# getIncPlotsDiff <- function(d, reqScn, pTitle=''){
 #   if(is.null(d) | nrow(d) == 0)
 #     return(ggplot(d) + geom_blank() + theme_bw())
 #   
@@ -83,7 +94,7 @@ getIncPlots <- function(d, pTitle=''){
 #     geom_line(aes(x = week, y = value, color =model)) +
 #     scale_color_manual(values = reqColors) +
 #     scale_x_continuous(breaks = seq(1, 52, 6), labels = subWeeks[seq(1, 52, 6)]) +
-#     facet_wrap(~scenario, ncol=8, scales = 'free_y') + 
+#     facet_wrap(~scenario, ncol=getCols(reqScn), scales = 'free_y') + 
 #     theme_bw() + labs(y = 'Estimate', x = 'Week', title = pTitle) +
 #     theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
 #           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
@@ -93,7 +104,7 @@ getIncPlots <- function(d, pTitle=''){
 #   return(p)
 # }
 
-getCmlPlots  <- function(d, max.limit = 0, pTitle =''){
+getCmlPlots  <- function(d, reqScn, max.limit = 0, pTitle =''){
   if(is.null(d) | nrow(d) == 0)
     return(ggplot(d) + geom_blank() + theme_bw())
   
@@ -112,7 +123,7 @@ getCmlPlots  <- function(d, max.limit = 0, pTitle =''){
     geom_errorbarh(aes(y = model, xmin = pmax(0, sm.perc25), xmax = sm.perc75, color = model), height=0.1) +
     # geom_vline(aes(xintercept = max.limit), linetype = 'dashed') + 
     scale_color_manual(values = reqColors) +
-    facet_wrap(~scenario, ncol=8, scales= 'free_x') + guides(color=F) +
+    facet_wrap(~scenario, ncol=getCols(reqScn), scales= 'free_x') + guides(color=F) +
     theme_bw() + labs(x = 'Cumulative estimate', y = 'Model', title = pTitle) +
     theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
@@ -122,7 +133,7 @@ getCmlPlots  <- function(d, max.limit = 0, pTitle =''){
   return(p)
 }
 
-getPlotsDiff  <- function(d, pTitle =''){
+getPlotsDiff  <- function(d, reqScn, pTitle =''){
   if(is.null(d) | nrow(d[!is.na(value)]) == 0)
     return(ggplot(d) + geom_blank() + theme_bw())
   
@@ -131,7 +142,7 @@ getPlotsDiff  <- function(d, pTitle =''){
     geom_text(aes(x = model, y = 0, label = round(value)), color = 'black', size=3, vjust = -.5) +
     geom_hline(yintercept = 0) +
     scale_fill_manual(values = reqColors) +
-    facet_wrap(~scenario, ncol=8) + guides(fill=F) +
+    facet_wrap(~scenario, ncol=getCols(reqScn)) + guides(fill=F) +
     theme_bw() + labs(y = 'Estimate, Diff (%) from baseline', x = 'Model', title = pTitle) +
     theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
@@ -161,7 +172,7 @@ getRankPlots <- function(d, pTitle =''){
   return(p)
 }
 
-getPIPlots <- function(d, max.limit = 0, week = 'Peak.Magnitude', pTitle=''){
+getPIPlots <- function(d, reqScn, max.limit = 0, week = 'Peak.Magnitude', pTitle=''){
   if(is.null(d) | nrow(d) == 0)
     return(ggplot(d) + geom_blank() + theme_bw())
   
@@ -182,7 +193,7 @@ getPIPlots <- function(d, max.limit = 0, week = 'Peak.Magnitude', pTitle=''){
     geom_errorbarh(aes(y = model, xmin = pmax(0, sm.perc25), xmax = sm.perc75, color = model), height=0.1) +
     # geom_vline(aes(xintercept = max.limit), linetype = 'dashed') + 
     scale_color_manual(values = reqColors) +
-    facet_wrap(~scenario, ncol=8, scales= 'free_x') + guides(color=F) +
+    facet_wrap(~scenario, ncol=getCols(reqScn), scales= 'free_x') + guides(color=F) +
     theme_bw() + labs(x = paste0(week, ' estimate'), y = 'Model', title = pTitle) +
     theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
@@ -192,31 +203,64 @@ getPIPlots <- function(d, max.limit = 0, week = 'Peak.Magnitude', pTitle=''){
   return(p)
 }
 
-getPeakPlots  <- function(d, pTitle=''){
+getPeakPlots  <- function(d, reqScn, pTitle=''){
   if(is.null(d) | nrow(d) == 0)
     return(ggplot(d) + geom_blank() + theme_bw())
-
-
+  
+  
   d <- melt(d[grepl('peak', tolower(Bin)) | grepl('peak', tolower(Bin_cml))], id.vars = c('Agegroup', 'Scenario', 'Version'),
             measure.vars = paste0('Week', 1:52),
             variable.name = 'week', value.name = 'value')
-
+  
   d$week <- factor(d$week, levels = paste0('Week', 1:52), labels = subWeeks)
-
+  
   d[value < 5e-5]$value <- NA
   d$value = round(d$value, 4)
-
+  
   p <- ggplot(d) +
     geom_tile(aes(x = as.integer(week), y = factor(Version), fill = log(value)), alpha=.5, na.rm = T) +
     scale_fill_gradient(low = 'yellow', high = 'red', na.value = 'white') +
-    facet_wrap(~Scenario, ncol = 8) +
+    facet_wrap(~Scenario, ncol = getCols(reqScn)) +
     scale_x_continuous(breaks = seq(1, 52, 6), labels = subWeeks[seq(1, 52, 6)]) +
     theme_bw() + labs(x = 'Week', y = 'Model', fill = 'P, log', title = pTitle) +
     theme(axis.title = element_text(size=12), strip.text = element_text(size=10),
           panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
           axis.text.x = element_text(size=8, hjust = 1, vjust = .5, angle=90),
           axis.text.y = element_text(size=10), legend.position = 'bottom')
+  
+  return(p)
+}
 
+
+getPeakPlotsDiff <- function(d, reqScn, pTitle=''){
+  if(is.null(d) | nrow(d) == 0)
+    return(ggplot(d) + geom_blank() + theme_bw())
+  
+  
+  d$Peak.Timing <- gsub('Week', '', d$Peak.Timing) %>% as.integer()
+  d$Peak.Timing.ref <- gsub('Week', '', d$Peak.Timing.ref) %>% as.integer()
+  
+  d$Peak.Magnitude = round(d$Peak.Magnitude, 4)
+  d$Peak.Magnitude.ref = round(d$Peak.Magnitude.ref, 4)
+  
+  p <- ggplot(d) +
+    geom_point(aes(x = Peak.Timing.ref, y = Peak.Magnitude.ref, color = Version), alpha=.75) + geom_rug() +
+    geom_curve(data = d[Peak.Magnitude != Peak.Magnitude.ref | Peak.Timing != Peak.Timing.ref], 
+               aes(x = Peak.Timing.ref, xend = Peak.Timing, y = Peak.Magnitude.ref, yend = Peak.Magnitude, color =Version),
+               alpha = .75, curvature = .2, 
+               arrow = arrow(length = unit(0.025, "npc"), type = 'closed')) +
+    # geom_text(data = d[Peak.Timing != Peak.Timing.ref],
+    #           aes(x = Peak.Timing.ref, y = Peak.Magnitude.ref, color = Version, label = (Peak.Timing - Peak.Timing.ref)),
+    #           size = 3, nudge_x = 1) +
+    scale_color_manual(values = reqColors) +
+    scale_x_continuous(breaks = seq(1, 52, 6), labels = subWeeks[seq(1, 52, 6)]) +
+    facet_wrap(~Scenario, ncol=getCols(reqScn)) + 
+    theme_bw() + labs(y = 'Change in Peak Magnitude and Timing', x = 'Week', title = pTitle) +
+    theme(axis.title = element_text(size=12), strip.text = element_text(size=10), 
+          panel.grid.minor.x = element_blank(), panel.grid.minor.y = element_blank(),
+          axis.text.x = element_text(size=8, vjust = .5, hjust = 1, angle=90),
+          axis.text.y = element_text(size=8), legend.position = 'bottom')
+  
   return(p)
 }
 
@@ -226,6 +270,7 @@ baseDir <- '../model-forecasts/'
 d <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
 d.diff <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
 d.diff.rank <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
+d.peaks <- list(ill = NULL, hosp = NULL, mort = NULL, meds = NULL)
 
 # weeks of projections
 subWeeks <- paste0('W', formatC(1:52, flag = '0', width=2))
@@ -318,7 +363,7 @@ shinyServer(function(input, output, session) {
   })
   
   
-
+  
   
   d.diff.rank <<- lapply(d.diff, function(x){
     splitBy(~Agegroup+Scenario.type+Version, x[, j = list(Agegroup, Version, Scenario, 
@@ -335,74 +380,110 @@ shinyServer(function(input, output, session) {
       rbindlist()
   })
   
+  
+  d.peaks <<- lapply(d, function(x){
+    x =  subset(x[Bin == 'sm.mean'], select = -c(Type, Bin, Peak.Magnitude, Bin_cml, Cml))%>%
+      melt(id.vars = c('Agegroup', 'Scenario', 'Version'), variable.name = 'Measure', value.name = 'Estimate')
+    
+    x.peak <- x[Estimate > 0, j = list(Estimate = max(Estimate, na.rm = T)), by = list(Agegroup, Scenario, Version)]
+    x <- merge(x, x.peak, by = c('Agegroup', 'Scenario', 'Version', 'Estimate'))
+    setnames(x, c('Estimate', 'Measure'), c('Peak.Magnitude', 'Peak.Timing'))
+    
 
+    refs <- x[Scenario %in% c('HP01', 'HP13', 'RL01')]
+    x$Scenario.ref = ifelse(x$Scenario %in% paste0('HP', formatC(1:12, width=2, flag = '0')), 'HP01',
+                            ifelse(x$Scenario %in% paste0('HP', formatC(13:24, width=2, flag = '0')), 'HP13', 'RL01'))
+    
+    x <- merge(x, refs, by.x = c('Agegroup', 'Scenario.ref', 'Version'), 
+               by.y = c('Agegroup', 'Scenario', 'Version'),
+               suffixes = c('', '.ref'), all.x = T) %>%
+      data.table()
+    
+    x$Scenario.ref = NULL
+    
+    x$Peak.Magnitude.ref = ifelse(is.na(x$Peak.Magnitude.ref), x$Peak.Magnitude, x$Peak.Magnitude.ref)
+    x$Peak.Timing.ref = ifelse(is.na(x$Peak.Timing.ref), x$Peak.Timing, x$Peak.Timing.ref)
+    
+    x
+  })
+  
+  
   
   #tab1
   output$cmlPlot <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
     
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d, function(x) !is.null(x)))){
       dSub <- d[[reqType]]
-      dSub <- dSub[Agegroup == reqGrp]#  & Version %in% reqVersions
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       max.limit = getMaxBin(reqType, is.cml = T)
       
       if(nrow(dSub) > 0)
-        getCmlPlots(dSub, max.limit, pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getCmlPlots(dSub, reqScn, max.limit, pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
   
   #tab2
   output$peakIntPlot <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d, function(x) !is.null(x)))){
       dSub <- d[[reqType]]
-      dSub <- dSub[Agegroup == reqGrp]#  & Version %in% reqVersions
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       max.limit = getMaxBin(reqType, is.cml = F)
       
       if(nrow(dSub) > 0)
-        getPIPlots(dSub, max.limit, week = 'Peak.Magnitude', pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getPIPlots(dSub, reqScn, max.limit, week = 'Peak.Magnitude', pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
   #tab3
   output$peakPlot <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
-
+    
     if(any(sapply(d, function(x) !is.null(x)))){
       dSub <- d[[reqType]]
-      dSub <- dSub[Agegroup == reqGrp]  # & Version %in% reqVersions
-
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
+      
       if(nrow(dSub) > 0)
-        getPeakPlots(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getPeakPlots(dSub, reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
   #tab4
   output$trajPlot <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d, function(x) !is.null(x)))){
       dSub <- d[[reqType]]
       dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       if(nrow(dSub) > 0)
-        getIncPlots(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getIncPlots(dSub, reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
@@ -410,14 +491,16 @@ shinyServer(function(input, output, session) {
   
   #tab5
   output$smTable <- renderDataTable({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d, function(x) !is.null(x)))){
       dSub <- d[[reqType]]
-      dSub <- dSub[Agegroup == reqGrp] 
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       if(nrow(dSub) > 0){
         dSub =  subset(dSub[grepl('sm.', Bin) & Bin != 'sm.peak'], select = -c(Type, Agegroup, Bin_cml))%>%
@@ -438,64 +521,88 @@ shinyServer(function(input, output, session) {
   ######### Diff plots
   #tab6
   output$cmlPlotDiff <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d.diff, function(x) !is.null(x)))){
       dSub <- d.diff[[reqType]]
       dSub <- dSub[Agegroup == reqGrp, j = list(model = Version, scenario = Scenario, value = round(Cml, 4))]
-      
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, scenario)]
+      }
       if(nrow(dSub) > 0)
-        getPlotsDiff(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getPlotsDiff(dSub, reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
   
   #tab7
   output$peakIntPlotDiff <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d.diff, function(x) !is.null(x)))){
       dSub <- d.diff[[reqType]]
       dSub <- dSub[Agegroup == reqGrp, j = list(model = Version, scenario = Scenario, value = round(Peak.Magnitude, 4))]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, scenario)]
+      }
       
       if(nrow(dSub) > 0)
-        getPlotsDiff(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+        getPlotsDiff(dSub, reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
     }
   })
   
   
   # #tab8
   # output$trajPlotDiff <- renderPlot({
-  #   reqGrp <- input$grp
+  #   reqGrp <- gsub('years', '', input$grp) %>% trimws
+  #   reqScn <- input$scn
   #   reqType <- reqTypeMap[name == input$outcome]$type
-  #   
-  #   reqGrp <- gsub('years', '', reqGrp) %>% trimws
-  #   
+  # 
   #   if(any(sapply(d.diff, function(x) !is.null(x)))){
   #     dSub <- d.diff[[reqType]]
   #     dSub <- dSub[Agegroup == reqGrp]
-  #     
+  #     if(reqScn != 'ALL'){
+  #       dSub <- dSub[grepl(reqScn, Scenario)]
+  #     }
   #     if(nrow(dSub) > 0)
-  #       getIncPlotsDiff(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
+  #       getIncPlotsDiff(dSub, reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
   #   }
   # })
   
-  #tab9
-  output$smTableDiff <- renderDataTable({
-    reqGrp <- input$grp
+  #tab8
+  output$peakPlotDiff <- renderPlot({
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
     
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
+    if(any(sapply(d.diff, function(x) !is.null(x)))){
+      dSub <- d.peaks[[reqType]]
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
+      
+      if(nrow(dSub) > 0)
+        getPeakPlotsDiff(dSub[!is.na(Peak.Magnitude.ref)], reqScn, pTitle=paste0(input$outcome, ' - ', reqGrp))
+    }
+  })
+  
+  #tab9
+  output$smTableDiff <- renderDataTable({
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
+    reqType <- reqTypeMap[name == input$outcome]$type
     
     if(any(sapply(d.diff, function(x) !is.null(x)))){
       dSub <- d.diff[[reqType]]
-      dSub <- dSub[Agegroup == reqGrp] 
+      dSub <- dSub[Agegroup == reqGrp]
+      if(reqScn == 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       if(nrow(dSub) > 0){
         dSub =  subset(dSub, select = -c(Agegroup))%>%
@@ -512,10 +619,9 @@ shinyServer(function(input, output, session) {
   
   #tab10
   output$rankPlot <- renderPlot({
-    reqGrp <- input$grp
+    reqGrp <- gsub('years', '', input$grp) %>% trimws
+    reqScn <- input$scn
     reqType <- reqTypeMap[name == input$outcome]$type
-    
-    reqGrp <- gsub('years', '', reqGrp) %>% trimws
     
     if(any(sapply(d.diff.rank, function(x) !is.null(x)))){
       dSub <- d.diff.rank[[reqType]]
@@ -528,8 +634,12 @@ shinyServer(function(input, output, session) {
                               id.vars = c('Version', 'Scenario.type', 'Scenario'), variable.name = 'measure')
       dSub.2$measure = gsub('.rank', '', dSub.2$measure)
       
-      dSub <- merge(dSub.1, dSub.2, by  = c('Version', 'Scenario.type', 'Scenario', 'measure'), suffixes = c('', '.rank'))
+      dSub <- merge(dSub.1, dSub.2, by  = c('Version', 'Scenario.type', 'Scenario', 'measure'), suffixes = c('', '.rank')) %>%
+        data.table()
       
+      if(reqScn != 'ALL'){
+        dSub <- dSub[grepl(reqScn, Scenario)]
+      }
       
       if(nrow(dSub) > 0)
         getRankPlots(dSub, pTitle=paste0(input$outcome, ' - ', reqGrp))
