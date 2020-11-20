@@ -73,9 +73,6 @@ read_ill <- function(scn){
     }
     if(i == 6){
       scn = paste0(scn, "_")
-      if(file.type == "AntiviralTX"){
-        file.type = "Antiviral"
-      }
     }
     
     f =  paste0(path,team.folder[i],scn,file.type,"_",team.abbrev[i],".csv")

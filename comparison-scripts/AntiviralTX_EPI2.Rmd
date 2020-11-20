@@ -58,7 +58,6 @@ read_overall_mean <- function(scn){
     }
     if(i == 6){
       scn = paste0(scn, "_")
-      file.types[4] <- "Antiviral"
     }
     f = paste0(path,team.folder[i],scn,file.types[4],"_",team.abbrev[i],".csv")
     if(i == 5){
