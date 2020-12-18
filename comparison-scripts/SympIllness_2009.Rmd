@@ -134,7 +134,7 @@ scn = "RL01_"
 
 read_ages <- function(scn){
   
-  cols <- c("sm.mean")
+  cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
 
   s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
   symillness <- data.frame(c(s[which(s$Agegroup != "Overall" &
@@ -181,17 +181,25 @@ read_ages <- function(scn){
   cml$Agegroup <- sub("yr", "years", cml$Agegroup)
   cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
   cml$Cml <- cml$Cml / 100
-  
   return(cml)
 }
 
 ages_1 <- read_ages(scn = "RL01_")
-ggplot(ages_1, aes(fill=Agegroup, y=Cml, x=team)) + 
+plot_ages_1 <- ages_1[which(ages_1$Bin == "sm.mean"),]
+ggplot(plot_ages_1, aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
 
 
+scenario = "RL01_"
+averted_age <- data.frame(scenario = scenario,
+                          team = ages_1$team[which(ages_1$Bin == "sm.mean")],
+                          agegroup = ages_1$Agegroup[which(ages_1$Bin == "sm.mean")],
+                          cml = ages_1$Cml[which(ages_1$Bin == "sm.mean")], 
+                          lower = ages_1$Cml[which(ages_1$Bin == "sm.perc2p5")],
+                          upper = ages_1$Cml[which(ages_1$Bin == "sm.perc97p5")])
+write.csv(averted_age, "SympIllnesses_2009_RL01.csv")
 ```
 
 ### RL02
@@ -236,15 +244,21 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
   ylab("Percent")+
   scale_fill_d3()
 
+# t <- table
+# t$vax_av_burden <- (t$`Absolute Averted % Ill (RL01)` / 100) * 306.8e6
+# write.csv(t, "2009_vax_averted.csv")
 
 averted <- data.frame(scenario = rep(scenario, nrow(table)),
                       team = table$Team,
                       reduction = table$`% Reduction in Burden (RL01)`)
 
 averted_age <- data.frame(scenario = scenario,
-                          team = ages$team,
-                          agegroup = ages$Agegroup,
-                          reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml )
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")])
+                     
 ```
 
 
@@ -295,10 +309,13 @@ averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
 
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 ```
 
 
@@ -349,10 +366,13 @@ ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) +
 averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 ```
 
 
@@ -402,10 +422,13 @@ averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
 
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 ```
 
 
@@ -455,10 +478,13 @@ averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
 
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 ```
 
 
@@ -509,10 +535,13 @@ averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
 
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 ```
 
 
@@ -562,10 +591,13 @@ averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
                                      team = table$Team,
                                      reduction = table$`% Reduction in Burden (RL01)`))
 
-averted_age <- rbind(averted_age, data.frame(scenario = scenario,
-                                             team = ages$team,
-                                             agegroup = ages$Agegroup,
-                                             reduction = 100*(ages_1$Cml - ages$Cml) / ages_1$Cml ))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 
 write.csv(averted, "SympIllness_2009.csv")
 write.csv(averted_age, "SympIllness_age_2009.csv")
