@@ -11,7 +11,7 @@
 
 <meta name="author" content="Pragati Prasad" />
 
-<meta name="date" content="2021-02-10" />
+<meta name="date" content="2021-04-21" />
 
 <title>Symptomatic Illnesses - 2009 Scenarios</title>
 
@@ -493,7 +493,7 @@ summary {
 
 <h1 class="title toc-ignore">Symptomatic Illnesses - 2009 Scenarios</h1>
 <h4 class="author">Pragati Prasad</h4>
-<h4 class="date">2021-02-10</h4>
+<h4 class="date">2021-04-21</h4>
 
 </div>
 
@@ -726,8 +726,7 @@ read_ages &lt;- function(scn){
   cols &lt;- c(&quot;sm.mean&quot;, &quot;sm.perc2p5&quot;, &quot;sm.perc97p5&quot;)
 
   s &lt;- read.csv(paste0(path,team.folder[1],scn,file.types[1],&quot;_&quot;,team.abbrev[1],&quot;.csv&quot;))
-  symillness &lt;- data.frame(c(s[which(s$Agegroup != &quot;Overall&quot; &amp;
-                                       s$Bin %in% cols),],
+  symillness &lt;- data.frame(c(s[which(s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
   for(i in 2:8){
@@ -759,8 +758,7 @@ read_ages &lt;- function(scn){
         team.abbrev[i] = &quot;NEU3&quot;
       }
       symillness &lt;- rbind.fill(symillness, 
-                               data.frame(c(s[which(s$Agegroup != &quot;Overall&quot; &amp; 
-                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+                               data.frame(c(s[which( s$Bin %in% cols),],`team` = team.abbrev[i])))
     }
     
   }
@@ -768,14 +766,14 @@ read_ages &lt;- function(scn){
   symillness$Cml[which(is.na(symillness$Cml))] &lt;- symillness$cml[which(is.na(symillness$Cml))]
   cml &lt;- symillness[c(&quot;Cml&quot;, &quot;team&quot;, &quot;Bin&quot;, &quot;Agegroup&quot;)]
   cml$Agegroup &lt;- sub(&quot;yr&quot;, &quot;years&quot;, cml$Agegroup)
-  cml$Agegroup &lt;- factor(x = cml$Agegroup, levels = c(&quot;0-4 years&quot;, &quot;5-17 years&quot;, &quot;18-49 years&quot;, &quot;50-64 years&quot;, &quot;65+ years&quot;))
+  cml$Agegroup &lt;- factor(x = cml$Agegroup, levels = c(&quot;Overall&quot;, &quot;0-4 years&quot;, &quot;5-17 years&quot;, &quot;18-49 years&quot;, &quot;50-64 years&quot;, &quot;65+ years&quot;))
   cml$Cml &lt;- cml$Cml / 100
   return(cml)
 }
 
 ages_1 &lt;- read_ages(scn = &quot;RL01_&quot;)
 plot_ages_1 &lt;- ages_1[which(ages_1$Bin == &quot;sm.mean&quot;),]
-ggplot(plot_ages_1, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(plot_ages_1[which(plot_ages_1$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -984,7 +982,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -1199,7 +1197,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -1413,7 +1411,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -1624,7 +1622,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -1836,7 +1834,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -2048,7 +2046,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>
@@ -2260,7 +2258,7 @@ NEU3
 </table>
 <pre class="r"><code>#Bar chart for ages
 ages &lt;- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != &quot;Overall&quot;),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) +
   ylab(&quot;Percent&quot;)+
   scale_fill_d3()</code></pre>

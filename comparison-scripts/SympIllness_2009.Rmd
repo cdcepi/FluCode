@@ -137,8 +137,7 @@ read_ages <- function(scn){
   cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
 
   s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
-  symillness <- data.frame(c(s[which(s$Agegroup != "Overall" &
-                                       s$Bin %in% cols),],
+  symillness <- data.frame(c(s[which(s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
   for(i in 2:8){
@@ -170,8 +169,7 @@ read_ages <- function(scn){
         team.abbrev[i] = "NEU3"
       }
       symillness <- rbind.fill(symillness, 
-                               data.frame(c(s[which(s$Agegroup != "Overall" & 
-                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+                               data.frame(c(s[which( s$Bin %in% cols),],`team` = team.abbrev[i])))
     }
     
   }
@@ -179,14 +177,14 @@ read_ages <- function(scn){
   symillness$Cml[which(is.na(symillness$Cml))] <- symillness$cml[which(is.na(symillness$Cml))]
   cml <- symillness[c("Cml", "team", "Bin", "Agegroup")]
   cml$Agegroup <- sub("yr", "years", cml$Agegroup)
-  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("Overall", "0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
   cml$Cml <- cml$Cml / 100
   return(cml)
 }
 
 ages_1 <- read_ages(scn = "RL01_")
 plot_ages_1 <- ages_1[which(ages_1$Bin == "sm.mean"),]
-ggplot(plot_ages_1, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(plot_ages_1[which(plot_ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -239,7 +237,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL02: Vaccine, Compared to RL01"
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -300,7 +298,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL03: Antivirals, Compared to RL
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -358,7 +356,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL04: Vaccine and Antivirals, Co
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -413,7 +411,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL05: School Closure > 1% Incide
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -469,7 +467,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL06: School Closure on Date of 
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -526,7 +524,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL07: Vaccine, Antivirals, and S
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
@@ -582,7 +580,7 @@ knitr::kable(table[5:9], digits = 2, caption = "RL08: Vaccine, Antivirals, and S
 
 #Bar chart for ages
 ages <- read_ages(scn = scenario)
-ggplot(ages, aes(fill=Agegroup, y=Cml, x=team)) + 
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()

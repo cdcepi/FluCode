@@ -63,8 +63,11 @@ read_overall_mean <- function(scn){
     }
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
+      if(ncol(s) > 59){
         s <- s[-1]
+      }
+      if(i == 4){
+        s <- s[which(s$Location == "US National"),]
       }
       symillness <- rbind.fill(symillness, 
                                data.frame(c(s[which(s$Agegroup == "Overall" & 
@@ -125,8 +128,7 @@ read_ages <- function(scn){
   cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
 
   s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
-  symillness <- data.frame(c(s[which(s$Agegroup != "Overall" &
-                                       s$Bin %in% cols),],
+  symillness <- data.frame(c(s[which(s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
   for(i in 2:6){
@@ -146,12 +148,14 @@ read_ages <- function(scn){
     }
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
+      if(ncol(s) > 59){
         s <- s[-1]
       }
+      if(i == 4){
+        s <- s[which(s$Location == "US National"),]
+      }
       symillness <- rbind.fill(symillness, 
-                               data.frame(c(s[which(s$Agegroup != "Overall" & 
-                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+                               data.frame(c(s[which(s$Bin %in% cols),],`team` = team.abbrev[i])))
     }
     
   }
@@ -159,7 +163,7 @@ read_ages <- function(scn){
   symillness$Cml[which(is.na(symillness$Cml))] <- symillness$cml[which(is.na(symillness$Cml))]
   cml <- symillness[c("Cml", "team", "Bin", "Agegroup")]
   cml$Agegroup <- sub("yr", "years", cml$Agegroup)
-  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("Overall","0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
   cml$Cml <- cml$Cml / 100
   
   return(cml)
@@ -167,7 +171,7 @@ read_ages <- function(scn){
 
 ages_1 <- read_ages(scn = "HP13_")
 names(ages_1)[2] <- "Model"
-p <- ggplot(ages_1, aes(fill=Agegroup, y=Cml, x=Model)) + 
+p <- ggplot(ages_1[which(ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=Model)) + 
    geom_bar(position="fill", stat="identity") +
   ylab("Percent of Total Illnesses")+
   scale_fill_d3()

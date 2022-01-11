@@ -63,8 +63,11 @@ read_overall_mean <- function(scn){
     }
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
+      if(ncol(s) > 59){
         s <- s[-1]
+      }
+      if(i == 4){
+        s <- s[which(s$Location == "US National"),]
       }
       hosp <- rbind.fill(hosp, 
                                data.frame(c(s[which(s$Agegroup == "Overall" & 

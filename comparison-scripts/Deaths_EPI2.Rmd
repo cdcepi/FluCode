@@ -63,8 +63,11 @@ read_overall_mean <- function(scn){
     }
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
+      if(ncol(s) > 59){
         s <- s[-1]
+      }
+      if(i == 4){
+        s <- s[which(s$Location == "US National"),]
       }
       death <- rbind.fill(death, 
                                data.frame(c(s[which(s$Agegroup == "Overall" & 
@@ -114,6 +117,7 @@ knitr::kable(table[5:7], digits = 2, caption = "HP13, No Intervention", align=re
 
 table1 <- table
 
+team.folder <- c("Columbia/COL/EPI2/", "Northeastern/EPI2/", "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/EPI2/")
 
 #Bar chart for age stratification
 read_ages <- function(scn){
@@ -121,8 +125,7 @@ read_ages <- function(scn){
   cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
 
   s <- read.csv(paste0(path,team.folder[1],scn,file.types[3],"_",team.abbrev[1],".csv"))
-  death <- data.frame(c(s[which(s$Agegroup != "Overall" &
-                                       s$Bin %in% cols),],
+  death <- data.frame(c(s[which(s$Bin %in% cols),],
                              `team` = team.abbrev[1]))
   
   for(i in 2:6){
@@ -142,12 +145,14 @@ read_ages <- function(scn){
     }
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
+      if(ncol(s) > 59){
         s <- s[-1]
       }
+      if(i == 4){
+        s <- s[which(s$Location == "US National"),]
+      }
       death <- rbind.fill(death, 
-                               data.frame(c(s[which(s$Agegroup != "Overall" & 
-                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+                               data.frame(c(s[which(s$Bin %in% cols),],`team` = team.abbrev[i])))
     }
     
   }
@@ -155,16 +160,18 @@ read_ages <- function(scn){
   death$Cml[which(is.na(death$Cml))] <- death$cml[which(is.na(death$Cml))]
   cml <- death[c("Cml", "team", "Bin", "Agegroup")]
   cml$Agegroup <- sub("yr", "years", cml$Agegroup)
-  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("Overall", "0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
   
   return(cml)
 }
 
 ages_1 <- read_ages(scn = "HP13_")
-ggplot(ages_1, aes(fill=Agegroup, y=Cml, x=team)) + 
+png("age_supp2b.png",width = 850, height=500)
+ggplot(ages_1[which(ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
+dev.off()
 
 scenario = "HP13_"
 averted_age <- data.frame(scenario = scenario,
