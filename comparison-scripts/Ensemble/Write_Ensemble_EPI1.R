@@ -21,11 +21,12 @@ library(dplyr)
 #Functions ---------------------------------------------------------------------------------------------
 read_overall_mean <- function(scn, outcome){
   
-  cols <- c("sm.mean", "sm.median", "sm.perc2p5", "sm.perc97p5")
+  cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
   
-  s <- read.csv(paste0(path,team.folder[1],scn,file.types[outcome],"_",team.abbrev[1],".csv"))
+  s <- read.csv(paste0(path,team.folder[1],scn,outcome,"_",team.abbrev[1],".csv"))
   symillness <- data.frame(c(s[which(s$Agegroup == "Overall" &
-                                       s$Bin %in% cols),],
+                                       s$Bin %in% cols &
+                                       s$Location == "US National"),],
                              `team` = team.abbrev[1]))
   
   for(i in 2:6){
@@ -52,25 +53,26 @@ read_overall_mean <- function(scn, outcome){
       }
     }
     
-    f =  paste0(path,team.folder[i],scn,file.types[outcome],"_",team.abbrev[i],".csv")
+    f =  paste0(path,team.folder[i],scn,outcome,"_",team.abbrev[i],".csv")
     if(i == 5){
-      f =  paste0(path,team.folder[i],scn,file.types[outcome],team.abbrev[i],".csv")
-      if(outcome == 3){
+      f =  paste0(path,team.folder[i],scn,outcome,team.abbrev[i],".csv")
+      if(outcome == "Deaths"){
         f =  paste0(path,team.folder[i],scn,"Death",team.abbrev[i],".csv")
       }
     }
     
     if(file.exists(f)){
       s <- read.csv(f)
-      if(ncol(s) > 58){
-        s <- s[-1]
-      }
+      # if(ncol(s) > 58){
+      #   s <- s[-1]
+      # }
       if(i == 2 & grepl("HP", scn, fixed=TRUE)){
         team.abbrev[i] = "NEU3"
       }
       symillness <- rbind.fill(symillness, 
                                data.frame(c(s[which(s$Agegroup == "Overall" & 
-                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+                                                      s$Bin %in% cols &
+                                                      s$Location == "US National"),],`team` = team.abbrev[i])))
     }
     
   }
@@ -117,7 +119,8 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   
   long <- long_HP01
   
-  wide <- long[-6] %>% 
+  wide <- long %>% 
+    select(-Date)%>% 
     gather(ens, ill, -(team:week)) %>%
     spread(key=team, value=ill)
   
@@ -212,12 +215,17 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
                      )
   )
   
-  rl01 <- total_cml[1:2]
-  rl01$Cml <- as.numeric(rl01$Cml)
+  hp01 <- total_cml[1:2]
+  hp01$Cml <- as.numeric(hp01$Cml)
   total_cml <- total_cml[-1]
   total_cml <-  cbind(total_cml[1], lapply(total_cml[-1], as.numeric))
   
-  averted <- cbind(total_cml[1], total_cml[-1] * (rl01$Cml/100) * 306.8e6)
+  if(outcome == "SymIllness"){
+    averted <- cbind(total_cml[1], total_cml[-1] * (hp01$Cml/100) * 306.8e6)
+  }else{
+    averted <- cbind(total_cml[1], total_cml[-1] * (hp01$Cml*100000))
+  }
+  
   colnames(averted) <- c("team", gsub("_", "", scenarios[-1]))
   a <- melt(averted, id.vars = c("team"), variable.name = "Averted")
   names(a) <- c("Team", 'Scenario', "Averted")
@@ -225,17 +233,13 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   # Percent Averted --------------------------------------------------------------------------------
   
   rank <- as.data.frame(cbind(averted$team,
-                              rbind(rank(-averted[1,2:8]),
-                                    rank(-averted[2,2:8]),
-                                    rank(-averted[3,2:8]),
-                                    rank(-averted[4,2:8]),
-                                    rank(-averted[5,2:8]),
-                                    rank(-averted[6,2:8]),
-                                    rank(-averted[7,2:8]),
-                                    rank(-averted[8,2:8]),
-                                    rank(-averted[9,2:8]),
-                                    rank(-averted[10,2:8]),
-                                    rank(-averted[11,2:8]))
+                              rbind(rank(-averted[1,2:12]),
+                                    rank(-averted[2,2:12]),
+                                    rank(-averted[3,2:12]),
+                                    rank(-averted[4,2:12]),
+                                    rank(-averted[5,2:12]),
+                                    rank(-averted[6,2:12]),
+                                    rank(-averted[7,2:12]))
   )
   )
   names(rank)[1] <- "team"
@@ -248,17 +252,13 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   a$Team <- factor(x = a$Team, levels = ens.levels)
   
   rank <- as.data.frame(cbind(total_cml$team,
-                              rbind(rank(-total_cml[1,2:8]),
-                                    rank(-total_cml[2,2:8]),
-                                    rank(-total_cml[3,2:8]),
-                                    rank(-total_cml[4,2:8]),
-                                    rank(-total_cml[5,2:8]),
-                                    rank(-total_cml[6,2:8]),
-                                    rank(-total_cml[7,2:8]),
-                                    rank(-total_cml[8,2:8]),
-                                    rank(-total_cml[9,2:8]),
-                                    rank(-total_cml[10,2:8]),
-                                    rank(-total_cml[11,2:8]))
+                              rbind(rank(-total_cml[1,2:12]),
+                                    rank(-total_cml[2,2:12]),
+                                    rank(-total_cml[3,2:12]),
+                                    rank(-total_cml[4,2:12]),
+                                    rank(-total_cml[5,2:12]),
+                                    rank(-total_cml[6,2:12]),
+                                    rank(-total_cml[7,2:12]))
   )
   )
   names(rank)[1] <- "team"
@@ -368,23 +368,19 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   total_cml <- cbind( total_cml$team,
                       as.data.frame(lapply(total_cml[-1], as.numeric)))
   
-  rank <- as.data.frame(rbind(rank(-total_cml[1,2:8]),
-                              rank(-total_cml[2,2:8]),
-                              rank(-total_cml[3,2:8]),
-                              rank(-total_cml[4,2:8]),
-                              rank(-total_cml[5,2:8]),
-                              rank(-total_cml[6,2:8]),
-                              rank(-total_cml[7,2:8]),
-                              rank(-total_cml[8,2:8]),
-                              rank(-total_cml[9,2:8]),
-                              rank(-total_cml[10,2:8]),
-                              rank(-total_cml[11,2:8]))
+  rank <- as.data.frame(rbind(rank(-total_cml[1,2:12]),
+                              rank(-total_cml[2,2:12]),
+                              rank(-total_cml[3,2:12]),
+                              rank(-total_cml[4,2:12]),
+                              rank(-total_cml[5,2:12]),
+                              rank(-total_cml[6,2:12]),
+                              rank(-total_cml[7,2:12]))
   )
   
   rank$team <- factor(x = ens.levels, 
                       levels = ens.levels)
   
-  names(rank)[8] <- "team"
+  names(rank)[12] <- "team"
   r <- melt(rank, id.vars = c("team"), variable.name = "Reduction")
   
   colnames(total_cml) <- c("team", gsub("_", "", scenarios[-1]))
@@ -411,7 +407,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   pw$Delay11 <- pw$HP11 - pw$HP01
   pw$Delay12 <- pw$HP12 - pw$HP01
   
-  pw <- pw[-2:-9]
+  pw <- pw[-2:-13]
   colnames(pw) <- c("team", gsub("_", "", scenarios[-1]))
   p <- melt(pw, id.vars = c("team"), variable.name = "Delay")
   colnames(p) <- c("Team", "Scenario", "Delay")
