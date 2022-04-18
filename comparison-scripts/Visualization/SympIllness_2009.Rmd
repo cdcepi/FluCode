@@ -1,0 +1,603 @@
+---
+title: "Symptomatic Illnesses - 2009 Scenarios"
+author: "Pragati Prasad"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Mean, Cumulative with 95% CI, and Percent Averted   {.tabset}
+
+
+### Scenario RL01
+
+Base scenario: no intervention
+```{r RL01, warning=FALSE, message = FALSE}
+
+library(ggsci)
+library(reshape)
+library(dplyr)
+library(gridExtra)
+library(ggplot2)
+library(egg)
+library(plyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(scales)
+
+
+path <- "../../model-forecasts/"
+
+
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/",  "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/", "Northeastern/RL3/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU", "NEU")
+file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
+scn = "RL01_"
+read_overall_mean <- function(scn){
+  
+  cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
+
+  s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
+  symillness <- data.frame(c(s[which(s$Agegroup == "Overall" &
+                                       s$Bin %in% cols),],
+                             `team` = team.abbrev[1]))
+  
+  for(i in 2:8){
+    
+    if(i == 4){
+      scn = gsub("RL", "RL_", scn)
+    }
+    if(i == 5){
+      scn = gsub("_", "", scn)
+    }
+    if(i == 6){
+      scn = paste0(scn, "_")
+    }
+    
+    f =  paste0(path,team.folder[i],scn,file.types[1],"_",team.abbrev[i],".csv")
+    if(i == 5){
+      f =  paste0(path,team.folder[i],scn,file.types[1],team.abbrev[i],".csv")
+    }
+
+    if(file.exists(f)){
+      s <- read.csv(f)
+      if(ncol(s) > 58){
+        s <- s[-1]
+      }
+      if(i == 7){
+        team.abbrev[i] = "NEU2"
+      }
+      if(i == 8){
+        team.abbrev[i] = "NEU3"
+      }
+      symillness <- rbind.fill(symillness, 
+                               data.frame(c(s[which(s$Agegroup == "Overall" & 
+                                                      s$Bin %in% cols),],`team` = team.abbrev[i])))
+    }
+    
+  }
+  weeks <- paste0("Week",1:52)
+  symillness$Cml[which(is.na(symillness$Cml))] <- symillness$cml[which(is.na(symillness$Cml))]
+  cml <<- symillness[c("Cml", "team", "Bin")]
+  
+  long <- gather(symillness, week, illnesses, weeks, factor_key=TRUE)
+  long$week <- as.integer(gsub("Week", "", long$week))
+  
+  cols <- c("Bin", "team", "week", "illnesses")
+  long <- long[cols]
+  long_wide <- spread(long, Bin, illnesses)
+  
+  return(long_wide)
+}
+
+long_RL01 <- read_overall_mean(scn = "RL01_")
+
+ggplot(data = long_RL01, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:7], digits = 2, caption = "RL01: 2009, no intervention", align=rep('c', 3)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+table1 <- table
+
+
+# Bar chart for age distribution
+
+team.folder <- c("Columbia/COL/RL/", "Northeastern/RL/",  "UTAustin/", "UVirginia/", "Imperial/", "Columbia/COL2/RL/", "Northeastern/RL2/", "Northeastern/RL3/")
+team.abbrev <- c("COL", "NEU", "UTA", "UVA", "IMP", "COL2", "NEU", "NEU")
+file.types <-c("SymIllness", "Hosp", "Deaths", "AntiviralTX")
+scn = "RL01_"
+
+read_ages <- function(scn){
+  
+  cols <- c("sm.mean", "sm.perc2p5", "sm.perc97p5")
+
+  s <- read.csv(paste0(path,team.folder[1],scn,file.types[1],"_",team.abbrev[1],".csv"))
+  symillness <- data.frame(c(s[which(s$Bin %in% cols),],
+                             `team` = team.abbrev[1]))
+  
+  for(i in 2:8){
+    
+    if(i == 4){
+      scn = gsub("RL", "RL_", scn)
+    }
+    if(i == 5){
+      scn = gsub("_", "", scn)
+    }
+    if(i == 6){
+      scn = paste0(scn, "_")
+    }
+    
+    f =  paste0(path,team.folder[i],scn,file.types[1],"_",team.abbrev[i],".csv")
+    if(i == 5){
+      f =  paste0(path,team.folder[i],scn,file.types[1],team.abbrev[i],".csv")
+    }
+
+    if(file.exists(f)){
+      s <- read.csv(f)
+      if(ncol(s) > 58){
+        s <- s[-1]
+      }
+      if(i == 7){
+        team.abbrev[i] = "NEU2"
+      }
+      if(i == 8){
+        team.abbrev[i] = "NEU3"
+      }
+      symillness <- rbind.fill(symillness, 
+                               data.frame(c(s[which( s$Bin %in% cols),],`team` = team.abbrev[i])))
+    }
+    
+  }
+  weeks <- paste0("Week",1:52)
+  symillness$Cml[which(is.na(symillness$Cml))] <- symillness$cml[which(is.na(symillness$Cml))]
+  cml <- symillness[c("Cml", "team", "Bin", "Agegroup")]
+  cml$Agegroup <- sub("yr", "years", cml$Agegroup)
+  cml$Agegroup <- factor(x = cml$Agegroup, levels = c("Overall", "0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+  cml$Cml <- cml$Cml / 100
+  return(cml)
+}
+
+ages_1 <- read_ages(scn = "RL01_")
+plot_ages_1 <- ages_1[which(ages_1$Bin == "sm.mean"),]
+ggplot(plot_ages_1[which(plot_ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+
+scenario = "RL01_"
+averted_age <- data.frame(scenario = scenario,
+                          team = ages_1$team[which(ages_1$Bin == "sm.mean")],
+                          agegroup = ages_1$Agegroup[which(ages_1$Bin == "sm.mean")],
+                          cml = ages_1$Cml[which(ages_1$Bin == "sm.mean")], 
+                          lower = ages_1$Cml[which(ages_1$Bin == "sm.perc2p5")],
+                          upper = ages_1$Cml[which(ages_1$Bin == "sm.perc97p5")])
+write.csv(averted_age, "SympIllnesses_2009_RL01.csv")
+```
+
+### RL02
+
+Vaccine  
+```{r RL02, warning=FALSE, message = FALSE}
+
+scenario <- "RL02_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL02: Vaccine, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+# t <- table
+# t$vax_av_burden <- (t$`Absolute Averted % Ill (RL01)` / 100) * 306.8e6
+# write.csv(t, "2009_vax_averted.csv")
+
+averted <- data.frame(scenario = rep(scenario, nrow(table)),
+                      team = table$Team,
+                      reduction = table$`% Reduction in Burden (RL01)`)
+
+averted_age <- data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")])
+                     
+```
+
+
+### RL03
+
+Antivirals  
+```{r RL03, warning=FALSE, message = FALSE}
+
+scenario <- "RL03_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL03: Antivirals, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+```
+
+
+### RL04
+
+Vaccine and Antivirals  
+```{r RL04, warning=FALSE, message = FALSE}
+
+scenario <- "RL04_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team, color = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), 
+              alpha = 0.3,
+              linetype=0,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL04: Vaccine and Antivirals, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+```
+
+
+### RL05
+
+School Closure when Illness incidence > 1%  
+```{r RL05, warning=FALSE, message = FALSE}
+
+scenario <- "RL05_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL05: School Closure > 1% Incidence, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+```
+
+
+### RL06
+
+School Closure on Date of Availability
+```{r RL06, warning=FALSE, message = FALSE}
+
+scenario <- "RL06_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL06: School Closure on Date of Availability, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+```
+
+
+
+### RL07
+
+Vaccine, Antivirals, and School Closure when Illness incidence > 1%  
+```{r RL07, warning=FALSE, message = FALSE}
+
+scenario <- "RL07_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL07: Vaccine, Antivirals, and School Closure > 1%, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+```
+
+
+### RL08
+
+Vaccine, Antivirals, and School Closure on Date of Availability  
+```{r RL08, warning=FALSE, message = FALSE}
+
+scenario <- "RL08_"
+
+long <- read_overall_mean(scn = scenario)
+
+ggplot(data = long, aes(x = week, y = sm.mean, group = team)) +
+  geom_line(aes(color = team), lwd = 1.0) +
+  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.3,
+              show.legend = FALSE)+
+  ylab("% Incident Symptomatic Illness") +
+  scale_color_nejm() +
+  scale_fill_nejm()
+
+
+table <- cml[which(cml$Bin == "sm.mean"),]
+table <- table[,-3]
+
+table$lower <-  cml$Cml[which(cml$Bin == "sm.perc2p5")]
+table$upper <-  cml$Cml[which(cml$Bin == "sm.perc97p5")]
+table$Team <- table$team
+table$`Cumulative % Ill` <- table$Cml
+table$`95% CI` <- paste0("(", round(table$lower, 2), ", ", round(table$upper, 2), ")")
+
+table$`Absolute Averted % Ill (RL01)` <- ifelse(table$Team %in% table1$Team, table1$`Cumulative % Ill` - table$`Cumulative % Ill`, NA)
+table$`% Reduction in Burden (RL01)` <- ifelse(table$Team %in% table1$Team, 100 * (table1$`Cumulative % Ill` - table$`Cumulative % Ill`) / table1$`Cumulative % Ill`, NA)
+
+rownames(table) <- NULL
+
+knitr::kable(table[5:9], digits = 2, caption = "RL08: Vaccine, Antivirals, and School Closure on Date of Availability, Compared to RL01", align=rep('c', 4)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+#Bar chart for ages
+ages <- read_ages(scn = scenario)
+ggplot(ages[which(ages$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  scale_fill_d3()
+
+averted <- rbind(averted, data.frame(scenario = rep(scenario, nrow(table)),
+                                     team = table$Team,
+                                     reduction = table$`% Reduction in Burden (RL01)`))
+
+averted_age <- rbind(averted_age,
+                     data.frame(scenario = scenario,
+                          team = ages$team[which(ages$Bin == "sm.mean")],
+                          agegroup = ages$Agegroup[which(ages$Bin == "sm.mean")],
+                          reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
+                                       ages$Cml[which(ages$Bin == "sm.mean")]) / 
+                            ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
+
+write.csv(averted, "SympIllness_2009.csv")
+write.csv(averted_age, "SympIllness_age_2009.csv")
+```
+
