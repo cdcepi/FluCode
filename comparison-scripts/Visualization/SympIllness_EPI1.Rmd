@@ -178,9 +178,6 @@ p <- ggplot(ages_1[which(ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=C
   scale_fill_d3()
 p
 
-png("age_supp1.png",width = 850, height=500)
-p
-dev.off()
 
 scenario = "HP01_"
 averted_age <- data.frame(scenario = scenario,

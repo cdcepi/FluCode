@@ -169,12 +169,12 @@ read_ages <- function(scn){
 }
 
 ages_1 <- read_ages(scn = "HP01_")
-png("age_supp1b.png",width = 850, height=500)
-ggplot(ages_1[which(ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
+
+p <- ggplot(ages_1[which(ages_1$Agegroup != "Overall"),], aes(fill=Agegroup, y=Cml, x=team)) + 
   geom_bar(position="fill", stat="identity") +
   ylab("Percent")+
   scale_fill_d3()
-dev.off()
+p
 
 scenario="HP01_"
 averted_age <- data.frame(scenario = scenario,
