@@ -130,7 +130,7 @@ dev.off()
 
 #Figure 10 - rank order figures---------------------------------------
 
-plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/2009_symillness_metrics.csv"))
+plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_metrics.csv"))
 plot_data$Team <- factor(plot_data$Team, ens.levels)
 
 p6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% rename(Averted = Reduction) %>%
@@ -310,7 +310,7 @@ dev.off()
 
 # Supp figure deaths - rank order figures ----------------------------
 
-plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/2009_death_metrics.csv"))
+plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_death_metrics.csv"))
 plot_data$Team <- factor(plot_data$Team, ens.levels)
 
 d6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% rename(Averted = Reduction) %>%
