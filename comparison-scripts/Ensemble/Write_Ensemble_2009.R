@@ -130,7 +130,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   long_ens$Date <- as.Date(long_ens$Date)
   long_ens$team <- factor(long_ens$team, levels = ens.levels)
   
-  # Save summary measure ------------------------------------------------------------------------------
+  # Summary Measure ------------------------------------------------------------------------------
   if(outcome == "SymIllness"){
     percent_sign = "%"
     sig_fig = 1

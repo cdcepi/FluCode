@@ -144,6 +144,28 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   long_ens <- rbind(long_HP01, ensemble)
   long_ens$Date <- as.Date(long_ens$Date)
   long_ens$team <- factor(long_ens$team, levels = ens.levels)
+  
+  # Summary Measure ------------------------------------------------------------------------------
+  if(outcome == "SymIllness"){
+    percent_sign = "%"
+    sig_fig = 1
+  }else{
+    percent_sign = ""
+    sig_fig = 0
+  }
+  
+  table <- rbind(mean_run[[2]] %>% group_by(Bin) %>% summarise(Cml = mean(Cml)) %>% mutate(team ="ENS") %>% select(Cml, team, Bin),
+                 mean_run[[2]] %>% select(Cml, team, Bin)) %>%
+    mutate(team = factor(team, levels = ens.levels)) %>%
+    arrange(team, Bin) %>%
+    pivot_wider(names_from = Bin, values_from = Cml) %>%
+    mutate(formatted = paste0(round(as.numeric(as.character(sm.mean)), sig_fig), percent_sign, " (",
+                              round(as.numeric(as.character(sm.perc2p5)), sig_fig), percent_sign,", ",
+                              round(as.numeric(as.character(sm.perc97p5)), sig_fig), percent_sign, ")")) %>%
+    select(team, formatted)
+  
+  names(table)[2] <- outcome
+  
   # Averted Total -------------------------------------------------------------------------------------
   
   cml <- mean_run[[2]] %>% filter(Bin == "sm.mean")
@@ -426,7 +448,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   p <- p %>% rename(Reduction = Delay) %>% 
     mutate(Rank = 0, Output = "Peak Delay")
   
-  return(list(long_ens, rbind(a,t,m,p)))
+  return(list(long_ens, rbind(a,t,m,p), table))
 }
 
 # Inputs -----------------------------------------------------------------------------------------
@@ -451,6 +473,8 @@ write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_symillness_HP01_ens
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_symillness_metrics.csv"))
 
+write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_symillness_table.csv"))
+
 # Hospitalizations --------------------------------------------------------------------------
 
 output <- calculate_metrics(scenarios, outcome = file.types[2], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
@@ -459,6 +483,8 @@ write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_hospitalization_HP0
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_hospitalization_metrics.csv"))
 
+write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_hospitalization_table.csv"))
+
 # Deaths --------------------------------------------------------------------------
 
 output <- calculate_metrics(scenarios, outcome = file.types[3], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
@@ -466,3 +492,5 @@ output <- calculate_metrics(scenarios, outcome = file.types[3], team.levels, tea
 write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_death_HP01_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_death_metrics.csv"))
+
+write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_death_table.csv"))
