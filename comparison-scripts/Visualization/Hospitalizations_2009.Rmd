@@ -190,7 +190,7 @@ averted_age <- data.frame(scenario = scenario,
                           cml = ages_1$Cml[which(ages_1$Bin == "sm.mean")], 
                           lower = ages_1$Cml[which(ages_1$Bin == "sm.perc2p5")],
                           upper = ages_1$Cml[which(ages_1$Bin == "sm.perc97p5")])
-write.csv(averted_age, "Hospitalizations_2009_RL01.csv")
+# write.csv(averted_age, "Hospitalizations_2009_RL01.csv")
 
 ```
 
@@ -583,7 +583,7 @@ averted_age <- rbind(averted_age,
                           reduction = 100*(ages_1$Cml[which(ages_1$Bin == "sm.mean")] - 
                                        ages$Cml[which(ages$Bin == "sm.mean")]) / 
                             ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
-write.csv(averted, "Hospitalizations_2009.csv")
-write.csv(averted_age, "Hospitalizations_age_2009.csv")
+# write.csv(averted, "Hospitalizations_2009.csv")
+# write.csv(averted_age, "Hospitalizations_age_2009.csv")
 ```
 

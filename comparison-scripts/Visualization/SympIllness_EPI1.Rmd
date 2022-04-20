@@ -844,6 +844,6 @@ averted_age <- rbind(averted_age,
                                        ages$Cml[which(ages$Bin == "sm.mean")]) / 
                             ages_1$Cml[which(ages_1$Bin == "sm.mean")]))
 
-write.csv(averted, "SympIllness_EPI1.csv")
-write.csv(averted_age, "SympIllness_age_EPI1.csv")
+# write.csv(averted, "SympIllness_EPI1.csv")
+# write.csv(averted_age, "SympIllness_age_EPI1.csv")
 ```
