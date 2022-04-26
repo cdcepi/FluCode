@@ -28,7 +28,7 @@ scenarios = c("RL01_", "RL02_", "RL03_", "RL04_", "RL05_", "RL06_", "RL07_", "RL
 
 dat <- read.csv(paste0(path, "MeanBased-ensemble/2009_symillness_ensemble.csv"))
 dat$Date <- as.Date(dat$Date)
-dat$team <- factor(dat$team, dat.levels)
+dat$team <- factor(dat$team, ens.levels)
 
 ens <- dat %>% 
   filter(team == "ENS") %>%

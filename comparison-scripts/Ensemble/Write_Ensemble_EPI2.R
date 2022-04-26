@@ -105,22 +105,14 @@ get_peaks <- function(dat){
   return(pw)
 }
 
-calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.folder, ens.levels, find, replace ){
+get_ensemble <- function(scn, long, team.levels, ens.levels){
   
-  # Base Trajectory --------------------------------------------------------------------------------------------
+  long$team <- factor(x = long$team, levels = team.levels)
   
-  mean_run <- read_overall_mean(scn = scenarios[1], outcome)
+  long <- long[order(long$team),]
+  long$Date <- as.Date("2020-06-24") + (long$week*7)
   
-  long_HP13 <- mean_run[[1]]
-  long_HP13$team <- factor(x = long_HP13$team, levels = team.levels)
-  
-  long_HP13 <- long_HP13[order(long_HP13$team),]
-  long_HP13$Date <- as.Date("2020-06-24") + (long_HP13$week*7)
-  
-  long <- long_HP13
-  
-  wide <- long %>% 
-    select(-Date)%>% 
+  wide <- long[-6] %>% 
     gather(ens, ill, -(team:week)) %>%
     spread(key=team, value=ill)
   
@@ -141,9 +133,21 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
                          sm.perc2p5 = wide$ill[which(wide$ens == "sm.perc2p5")],
                          sm.perc97p5 = wide$ill[which(wide$ens == "sm.perc97p5")],
                          Date = unique(wide$Date))
-  long_ens <- rbind(long_HP13, ensemble)
+  long_ens <- rbind(long, ensemble)
   long_ens$Date <- as.Date(long_ens$Date)
   long_ens$team <- factor(long_ens$team, levels = ens.levels)
+  
+  names(long_ens) <- gsub("sm.", scn, names(long_ens))
+  
+  return(long_ens)
+}
+
+calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.folder, ens.levels, find, replace ){
+  
+  # Base Trajectory --------------------------------------------------------------------------------------------
+  
+  mean_run <- read_overall_mean(scn = scenarios[1], outcome)
+  long_ens <- get_ensemble(scn = scenarios[1], long = mean_run[[1]], team.levels, ens.levels)
   
   # Summary Measure ------------------------------------------------------------------------------
   if(outcome == "SymIllness"){
@@ -173,50 +177,73 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   
   cml_sum <- cml$Cml
   
-  cml <- read_overall_mean(scn = scenarios[2], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[2], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[2], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml2 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum <- data.frame(HP13 = cml_sum,
                         HP14 = cml$Cml[which(cml$Bin == "sm.mean")])
   
-  cml <- read_overall_mean(scn = scenarios[3], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[3], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[3], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml3 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP15 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[4], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[4], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[4], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml4 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP16 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[5], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[5], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[5], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml5 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP17 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[6], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[6], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[6], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml6 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP18 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[7], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[7], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[7], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]  
   total_cml$Cml7 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP19 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[8], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[8], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[8], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml8 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP20 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[9], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[9], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[9], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml9 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP21 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[10], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[10], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[10], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml10 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP22 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[11], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[11], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[11], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml11 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP23 <- cml$Cml[which(cml$Bin == "sm.mean")]
   
-  cml <- read_overall_mean(scn = scenarios[12], outcome)[[2]]
+  mean_run <- read_overall_mean(scn = scenarios[12], outcome)
+  long_ens <- left_join(long_ens, get_ensemble(scn = scenarios[12], long = mean_run[[1]], team.levels, ens.levels), by = c("team", "week", "Date"))
+  cml <- mean_run[[2]]
   total_cml$Cml12 <- (total_cml$Cml - cml$Cml[which(cml$Bin == "sm.mean")]) / total_cml$Cml 
   cml_sum$HP24 <- cml$Cml[which(cml$Bin == "sm.mean")]
+  
   total_cml$team <- factor(x = total_cml$team, levels = ens.levels)
   
   cml_sum <- rbind(cml_sum, colMeans(cml_sum))
@@ -469,7 +496,7 @@ scenarios = c("HP13_", "HP14_", "HP15_", "HP16_", "HP17_", "HP18_", "HP19_", "HP
 
 output <- calculate_metrics(scenarios, outcome = file.types[1], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
 
-write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_symillness_HP13_ensemble.csv"))
+write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_symillness_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN2_symillness_metrics.csv"))
 
@@ -479,7 +506,7 @@ write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN2_symillness_table.cs
 
 output <- calculate_metrics(scenarios, outcome = file.types[2], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
 
-write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_hospitalization_HP13_ensemble.csv"))
+# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_hospitalization_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN2_hospitalization_metrics.csv"))
 
@@ -489,7 +516,7 @@ write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN2_hospitalization_tab
 
 output <- calculate_metrics(scenarios, outcome = file.types[3], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
 
-write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_death_HP13_ensemble.csv"))
+# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN2_death_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN2_death_metrics.csv"))
 

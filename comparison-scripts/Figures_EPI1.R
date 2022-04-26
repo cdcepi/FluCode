@@ -109,15 +109,15 @@ path <- "../model-forecasts/"
 
 ens.levels <- c("ENS", "UVA", "UTA", "NEU3", "IMP", "COL2", "COL")
 
-long_ens <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_HP01_ensemble.csv"))
+long_ens <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_ensemble.csv"))
 long_ens$Date <- as.Date(long_ens$Date)
 long_ens$team <- factor(long_ens$team, ens.levels)
 pal_black <- c("black",rev(pal(6)))
 
 png("fig1_EPI1.png",width = 850, height=500)
-ggplot(data = long_ens, aes(x = Date, y = sm.mean, group = team)) +
+ggplot(data = long_ens, aes(x = Date, y = HP01_mean, group = team)) +
   geom_line(aes(color = team), lwd = 1.5) +
-  geom_ribbon(aes(ymin = sm.perc2p5, ymax = sm.perc97p5, fill = team), alpha = 0.15,
+  geom_ribbon(aes(ymin = HP01_perc2p5, ymax = HP01_perc97p5, fill = team), alpha = 0.15,
               show.legend = FALSE)+
   ylab("% Incident Symptomatic Illness") +
   scale_color_manual(values = pal_black)+
