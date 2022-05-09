@@ -80,7 +80,7 @@ e <- data.frame(team="ENS",
                 lower = ens$lower,
                 upper = ens$upper)
 d <- rbind(d, e)
-d$team <- factor(x = d$team, levels =ens.levels)
+d$team <- factor(x = d$team, levels = ens.levels)
 
 pal <- pal_nejm()
 p2 <- ggplot(d, aes(x = team, y = cml, color=team)) + 

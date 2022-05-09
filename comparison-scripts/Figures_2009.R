@@ -39,7 +39,7 @@ e <- data.frame(team="ENS",
                 lower = ens$lower,
                 upper = ens$upper)
 s <- rbind(s, e)
-s$team <- factor(x = s$team, levels = c("COL", "COL2", "IMP", "NEU3", "UTA", "UVA", "ENS"))
+s$team <- factor(x = s$team, levels = rev(c("COL", "COL2", "IMP", "NEU3", "UTA", "UVA", "ENS")))
 
 s$cml <- s$cml * 100
 s$lower <- s$lower * 100
@@ -52,7 +52,7 @@ p1 <- ggplot(s, aes(x = team, y = cml, color=team)) +
   geom_point(size = 3.5, position=position_dodge2(0.9)) +
   geom_errorbar(aes(x = team, ymax = upper, ymin = lower),
                 position=position_dodge2(0.9), size=1)+
-  scale_color_manual(values = c(rev(pal(6)), "black"))+
+  scale_color_manual(values = rev(c(rev(pal(6)), "black")))+
   xlab("")+
   ylab("Percent Symptomatic")+ theme(panel.grid.major.x = element_blank())+
   # ggtitle("a. Age-specific symptomatic percentages in 2009 no intervention scenario")+
@@ -80,7 +80,7 @@ e <- data.frame(team="ENS",
                 lower = ens$lower,
                 upper = ens$upper)
 d <- rbind(d, e)
-d$team <- factor(x = d$team, levels = c("COL", "COL2", "IMP", "NEU3", "UTA", "UVA", "ENS"))
+d$team <- factor(x = d$team, levels = rev(c("COL", "COL2", "IMP", "NEU3", "UTA", "UVA", "ENS")))
 
 pal <- pal_nejm()
 p2 <- ggplot(d, aes(x = team, y = cml, color=team)) + 
@@ -89,7 +89,7 @@ p2 <- ggplot(d, aes(x = team, y = cml, color=team)) +
   geom_point(size = 3.5, position=position_dodge2(0.9)) +
   geom_errorbar(aes(x = team, ymax = upper, ymin = lower), size=1,
                 position=position_dodge2(0.9))+
-  scale_color_manual(values = c(rev(pal(6)), "black"))+
+  scale_color_manual(values = rev(c(rev(pal(6)), "black")))+
   xlab("")+
   ylab("Death Rate per 100,000")+ theme(panel.grid.major.x = element_blank())+
   # ggtitle("b. Age-specific death rates per 100,000 in 2009 no intervention scenario")+
