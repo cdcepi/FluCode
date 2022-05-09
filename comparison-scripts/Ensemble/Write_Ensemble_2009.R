@@ -138,7 +138,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   # Summary Measure ------------------------------------------------------------------------------
   if(outcome == "SymIllness"){
     percent_sign = "%"
-    sig_fig = 1
+    sig_fig = 0
   }else{
     percent_sign = ""
     sig_fig = 0

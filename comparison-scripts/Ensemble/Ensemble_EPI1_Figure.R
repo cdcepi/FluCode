@@ -42,7 +42,7 @@ ggplot(data = ens, aes(x = Date, group=scenario)) +
   ylab("% Incident Symptomatic Illness") +
   scale_fill_viridis(discrete=TRUE)+
   scale_color_viridis(discrete=TRUE)+
-  ggtitle("")+
+  ggtitle("a.")+
   theme_light()+
   scale_x_date(labels = date_format("%b"))
 dev.off()

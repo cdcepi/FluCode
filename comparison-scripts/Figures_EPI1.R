@@ -17,6 +17,8 @@ library(grid)
 library(doBy)
 
 setwd("C:/Users/ppf6/Desktop/GitHub/FluCode/comparison-scripts")
+path <- "../model-forecasts/"
+ens.levels <- c("ENS", "UVA", "UTA", "NEU", "IMP", "COL2", "COL")
 
 #Figure 7 - age-specific AR---------------------------------------
 
@@ -38,7 +40,7 @@ e <- data.frame(team="ENS",
                 lower = ens$lower,
                 upper = ens$upper)
 s <- rbind(s, e)
-s$team <- factor(x = s$team, levels = c("COL", "COL2", "IMP", "NEU", "UTA", "UVA", "ENS"))
+s$team <- factor(x = s$team, levels = ens.levels)
 
 s$cml <- s$cml * 100
 s$lower <- s$lower * 100
@@ -51,7 +53,7 @@ p1 <- ggplot(s, aes(x = team, y = cml, color=team)) +
   geom_point(size = 3.5, position=position_dodge2(0.9)) +
   geom_errorbar(aes(x = team, ymax = upper, ymin = lower), size=1,
                 position=position_dodge2(0.9))+
-  scale_color_manual(values = c(rev(pal(6)), "black"))+
+  scale_color_manual(values = c("black", pal(6)))+
   xlab("")+
   ylab("Percent Symptomatic")+ theme(panel.grid.major.x = element_blank())+
   # ggtitle("a. Age-specific symptomatic percentages in EPI1 no intervention scenario (HP01)")+
@@ -78,7 +80,7 @@ e <- data.frame(team="ENS",
                 lower = ens$lower,
                 upper = ens$upper)
 d <- rbind(d, e)
-d$team <- factor(x = d$team, levels = c("COL", "COL2", "IMP", "NEU", "UTA", "UVA", "ENS"))
+d$team <- factor(x = d$team, levels =ens.levels)
 
 pal <- pal_nejm()
 p2 <- ggplot(d, aes(x = team, y = cml, color=team)) + 
@@ -87,7 +89,7 @@ p2 <- ggplot(d, aes(x = team, y = cml, color=team)) +
   geom_point(size = 3.5, position=position_dodge2(0.9)) +
   geom_errorbar(aes(x = team, ymax = upper, ymin = lower), size=1,
                 position=position_dodge2(0.9))+
-  scale_color_manual(values = c(rev(pal(6)), "black"))+
+  scale_color_manual(values = c("black", pal(6)))+
   xlab("")+
   ylab("Death Rate per 100,000")+ theme(panel.grid.major.x = element_blank())+
   # ggtitle("b. Age-specific death rates per 100,000 in EPI1 no intervention scenario (HP01)")+
@@ -105,14 +107,14 @@ dev.off()
 
 
 #Figure 6 - unmitigated epi curve---------------------------------------
-path <- "../model-forecasts/"
-
-ens.levels <- c("ENS", "UVA", "UTA", "NEU3", "IMP", "COL2", "COL")
 
 long_ens <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_ensemble.csv"))
+long_ens <- long_ens %>% mutate(team = as.character(team)) %>% 
+  mutate(team = case_when(team == "NEU3" ~ "NEU",
+                          team != "NEU3" ~ team))
 long_ens$Date <- as.Date(long_ens$Date)
 long_ens$team <- factor(long_ens$team, ens.levels)
-pal_black <- c("black",rev(pal(6)))
+pal_black <- c("black",pal(6))
 
 png("fig1_EPI1.png",width = 850, height=500)
 ggplot(data = long_ens, aes(x = Date, y = HP01_mean, group = team)) +
@@ -122,10 +124,38 @@ ggplot(data = long_ens, aes(x = Date, y = HP01_mean, group = team)) +
   ylab("% Incident Symptomatic Illness") +
   scale_color_manual(values = pal_black)+
   scale_fill_manual(values = pal_black)+
-  # ggtitle("Figure 6. No intervention scenario symptomatic illness epidemic curves")+
+  ggtitle("a.")+
   theme_light()+
   scale_x_date(labels = date_format("%b"))
 
+dev.off()
+
+#Figure 7 --------------------------------------------------------------
+
+age_ill <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_base_age.csv"))
+age_ill$Agegroup <- gsub("yr", "years", age_ill$Agegroup)
+age_ill$team <- factor(x = age_ill$team, levels = ens.levels[-1])
+age_ill$Agegroup <- factor(x = age_ill$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+
+age_dead <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_death_base_age.csv"))
+age_dead$Agegroup <- gsub("yr", "years", age_dead$Agegroup)
+age_dead$team <- factor(x = age_dead$team, levels = ens.levels[-1])
+age_dead$Agegroup <- factor(x = age_dead$Agegroup, levels = c("0-4 years", "5-17 years", "18-49 years", "50-64 years", "65+ years"))
+
+fig7a <- ggplot(age_ill, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  ggtitle("a.")+
+  scale_fill_d3(name = "Age Group")
+
+fig7b <- ggplot(age_dead, aes(fill=Agegroup, y=Cml, x=team)) + 
+  geom_bar(position="fill", stat="identity") +
+  ylab("Percent")+
+  ggtitle("b.")+
+  scale_fill_d3(name = "Age Group")
+
+png("fig7_EPI1.png",width = 400, height=500)
+ggarrange(fig7a, fig7b, nrow=2, ncol=1)
 dev.off()
 
 #Figure 10 - rank order figures---------------------------------------
@@ -133,7 +163,7 @@ dev.off()
 plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_symillness_metrics.csv"))
 plot_data$Team <- factor(plot_data$Team, ens.levels)
 
-p6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% rename(Averted = Reduction) %>%
+p6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% dplyr::rename(Averted = Reduction) %>%
   ggplot(., aes( x = x, y = Averted, fill = Rank)) +
   geom_col() +
   facet_grid( Team ~  Scenario, switch = "y") +
@@ -165,7 +195,7 @@ p3 <- plot_data %>% filter(Output == "Averted Percent") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +  
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -183,7 +213,7 @@ p4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -196,7 +226,7 @@ p4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
   scale_y_discrete(limits = rev(levels(plot_data$Team)))
 
 
-p5 <- plot_data %>% filter(Output == "Peak Delay") %>% rename(Delay = Reduction)%>% ggplot(.) +
+p5 <- plot_data %>% filter(Output == "Peak Delay") %>% dplyr::rename(Delay = Reduction)%>% ggplot(.) +
   geom_raster(aes(y = Team, x = Scenario, fill = Delay)) +
   scale_fill_gradientn(colors = wes_palette("Zissou1", 5)[c(5,3,1)]) +
   geom_text(aes(y = Team, x = Scenario, label = Delay), size=5) +
@@ -225,7 +255,7 @@ dev.off()
 plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_hospitalization_metrics.csv"))
 plot_data$Team <- factor(plot_data$Team, ens.levels)
 
-h6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% rename(Averted = Reduction) %>%
+h6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% dplyr::rename(Averted = Reduction) %>%
   ggplot(., aes( x = x, y = Averted, fill = Rank)) +
   geom_col() +
   facet_grid( Team ~  Scenario, switch = "y") +
@@ -257,7 +287,7 @@ h3 <-  plot_data %>% filter(Output == "Averted Percent") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -275,7 +305,7 @@ h4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -287,7 +317,7 @@ h4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
   ggtitle("c.")+ 
   scale_y_discrete(limits = rev(levels(plot_data$Team)))
 
-h5 <- plot_data %>% filter(Output == "Peak Delay") %>% rename(Delay = Reduction)%>% ggplot(.) +
+h5 <- plot_data %>% filter(Output == "Peak Delay") %>% dplyr::rename(Delay = Reduction)%>% ggplot(.) +
   geom_raster(aes(y = Team, x = Scenario, fill = Delay)) +
   scale_fill_gradientn(colors = wes_palette("Zissou1", 5)[c(5,3,1)]) +
   geom_text(aes(y = Team, x = Scenario, label = Delay), size=5) +
@@ -313,7 +343,7 @@ dev.off()
 plot_data <- read.csv(paste0(path, "MeanBased-Ensemble/PAN1_death_metrics.csv"))
 plot_data$Team <- factor(plot_data$Team, ens.levels)
 
-d6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% rename(Averted = Reduction) %>%
+d6 <- plot_data %>% filter(Output == "Averted Number") %>% mutate(x = 1)%>% dplyr::rename(Averted = Reduction) %>%
   ggplot(., aes( x = x, y = Averted, fill = Rank)) +
   geom_col() +
   facet_grid( Team ~  Scenario, switch = "y") +
@@ -346,7 +376,7 @@ d3 <- plot_data %>% filter(Output == "Averted Percent") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -364,7 +394,7 @@ d4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
                        breaks = c(1:11),
                        labels = c(1:11),
                        guide = "legend") +
-  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 1))), size=5) +
+  geom_text(aes(y = Team, x = Scenario, label = paste0(round(Reduction, 0))), size=5) +
   # facet_wrap(Scenario.type~measure, ncol = 2, scales = 'free_x') +
   theme_minimal() + 
   labs(y = 'Model', x = 'Scenario', fill = 'Rank') +
@@ -376,7 +406,7 @@ d4 <- plot_data %>% filter(Output == "Magnitude Reduction") %>% ggplot(.) +
   ggtitle("c.")+ 
   scale_y_discrete(limits = rev(levels(plot_data$Team)))
 
-d5 <- plot_data %>% filter(Output == "Peak Delay") %>% rename(Delay = Reduction)%>% ggplot(.) +
+d5 <- plot_data %>% filter(Output == "Peak Delay") %>% dplyr::rename(Delay = Reduction)%>% ggplot(.) +
   geom_raster(aes(y = Team, x = Scenario, fill = Delay)) +
   scale_fill_gradientn(colors = wes_palette("Zissou1", 5)[c(5,3,1)]) +
   geom_text(aes(y = Team, x = Scenario, label = Delay), size=5) +

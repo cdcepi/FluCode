@@ -28,6 +28,10 @@ read_overall_mean <- function(scn, outcome){
                                        s$Bin %in% cols &
                                        s$Location == "US National"),],
                              `team` = team.abbrev[1]))
+  age <- s %>% 
+    filter(Agegroup != "Overall", Bin_cml == "sm.mean", Location == "US National") %>%
+    select(Agegroup, Bin_cml, Cml) %>%
+    mutate(team = team.abbrev[1])
   
   for(i in 2:6){
     
@@ -63,9 +67,12 @@ read_overall_mean <- function(scn, outcome){
     
     if(file.exists(f)){
       s <- read.csv(f)
-      # if(ncol(s) > 58){
-      #   s <- s[-1]
-      # }
+      
+      age <- rbind(age, s %>% 
+        filter(Agegroup != "Overall", Bin_cml == "sm.mean", Location == "US National") %>%
+        select(Agegroup, Bin_cml, Cml) %>%
+        mutate(team = team.abbrev[i]))
+      
       if(i == 2 & grepl("HP", scn, fixed=TRUE)){
         team.abbrev[i] = "NEU3"
       }
@@ -90,7 +97,7 @@ read_overall_mean <- function(scn, outcome){
   long <- long[cols]
   long_wide <- spread(long, Bin, illnesses)
   
-  return(list(long_wide, cml))
+  return(list(long_wide, cml, age))
 }
 
 get_peaks <- function(dat){
@@ -145,18 +152,20 @@ get_ensemble <- function(scn, long, team.levels, ens.levels){
 calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.folder, ens.levels, find, replace ){
   
   mean_run <- read_overall_mean(scn = scenarios[1], outcome)
+  age <- mean_run[[3]]
   long_ens <- get_ensemble(scn = scenarios[1], long = mean_run[[1]], team.levels, ens.levels)
   
   # Summary Measure ------------------------------------------------------------------------------
   if(outcome == "SymIllness"){
     percent_sign = "%"
-    sig_fig = 1
+    sig_fig = 0
   }else{
     percent_sign = ""
     sig_fig = 0
   }
   
-  table <- rbind(mean_run[[2]] %>% group_by(Bin) %>% summarise(Cml = mean(Cml)) %>% mutate(team ="ENS") %>% select(Cml, team, Bin),
+  table <- rbind(mean_run[[2]] %>% 
+                   dplyr::group_by(Bin) %>% summarise(Cml = mean(Cml)) %>% mutate(team ="ENS") %>% select(Cml, team, Bin),
                  mean_run[[2]] %>% select(Cml, team, Bin)) %>%
     mutate(team = factor(team, levels = ens.levels)) %>%
     arrange(team, Bin) %>%
@@ -474,7 +483,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   p <- p %>% rename(Reduction = Delay) %>% 
     mutate(Rank = 0, Output = "Peak Delay")
   
-  return(list(long_ens, rbind(a,t,m,p), table))
+  return(list(long_ens, rbind(a,t,m,p), table, age))
 }
 
 # Inputs -----------------------------------------------------------------------------------------
@@ -501,11 +510,13 @@ write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_symillness_metrics.
 
 write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_symillness_table.csv"))
 
+write.csv(output[[4]], paste0(path,"/MeanBased-Ensemble/PAN1_symillness_base_age.csv"))
+
 # Hospitalizations --------------------------------------------------------------------------
 
 output <- calculate_metrics(scenarios, outcome = file.types[2], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
 
-# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_hospitalization_HP01_ensemble.csv"))
+# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_hospitalization_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_hospitalization_metrics.csv"))
 
@@ -515,8 +526,11 @@ write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_hospitalization_tab
 
 output <- calculate_metrics(scenarios, outcome = file.types[3], team.levels, team.abbrev, team.folder, ens.levels, find = "HP", replace = "HP")
 
-# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_death_HP01_ensemble.csv"))
+# write.csv(output[[1]], paste0(path, "MeanBased-Ensemble/PAN1_death_ensemble.csv"))
 
 write.csv(output[[2]], paste0(path,"/MeanBased-Ensemble/PAN1_death_metrics.csv"))
 
 write.csv(output[[3]], paste0(path,"/MeanBased-Ensemble/PAN1_death_table.csv"))
+
+write.csv(output[[4]], paste0(path,"/MeanBased-Ensemble/PAN1_death_base_age.csv"))
+
