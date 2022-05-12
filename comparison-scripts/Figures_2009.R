@@ -115,7 +115,7 @@ ens.levels <- c("ENS", "UVA", "UTA", "NEU3", "IMP", "COL2", "COL")
 long_ens <- read.csv(paste0(path, "MeanBased-Ensemble/2009_symillness_ensemble.csv"))
 long_ens$Date <- as.Date(long_ens$Date)
 long_ens$team <- factor(long_ens$team, ens.levels)
-pal_black <- c("black",rev(pal(6)))
+pal_black <- c("black",pal(6))
 
 png("fig1_2009.png",width = 850, height=500)
 ggplot(data = long_ens, aes(x = Date, y = RL01_mean, group = team)) +
