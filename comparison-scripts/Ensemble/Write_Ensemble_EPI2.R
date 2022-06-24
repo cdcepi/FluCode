@@ -117,7 +117,7 @@ get_ensemble <- function(scn, long, team.levels, ens.levels){
   long$team <- factor(x = long$team, levels = team.levels)
   
   long <- long[order(long$team),]
-  long$Date <- as.Date("2020-06-24") + (long$week*7)
+  long$Date <- as.Date("2020-08-25") + (long$week*7)
   
   wide <- long[-6] %>% 
     gather(ens, ill, -(team:week)) %>%
@@ -131,7 +131,7 @@ get_ensemble <- function(scn, long, team.levels, ens.levels){
   
   wide$ill <- ens
   
-  wide$Date <- as.Date("2020-06-24") + (wide$week*7)
+  wide$Date <- as.Date("2020-08-25") + (wide$week*7)
   wide$ens <- factor(x = wide$ens, levels = c("sm.mean", "sm.median","sm.perc2p5", "sm.perc97p5"))
   
   ensemble <- data.frame(team="ENS",
@@ -166,7 +166,7 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
     sig_fig = 0
   }
   
-  table <- rbind(mean_run[[2]] %>% group_by(Bin) %>% summarise(Cml = mean(Cml)) %>% mutate(team ="ENS") %>% select(Cml, team, Bin),
+  table <- rbind(mean_run[[2]] %>% dplyr::group_by(Bin) %>% dplyr::summarise(Cml = mean(Cml)) %>% mutate(team ="ENS") %>% select(Cml, team, Bin),
                  mean_run[[2]] %>% select(Cml, team, Bin)) %>%
     mutate(team = factor(team, levels = ens.levels)) %>%
     arrange(team, Bin) %>%
@@ -477,10 +477,10 @@ calculate_metrics<- function(scenarios, outcome, team.levels, team.abbrev, team.
   
   # Writing all data -----------------------------------------------------------------------------
   
-  a <- a %>% rename(Reduction = Averted) %>% select(!x) %>% mutate(Output = "Averted Number")
+  a <- a %>% dplyr::rename(Reduction = Averted) %>% select(!x) %>% mutate(Output = "Averted Number")
   t <- t %>% mutate(Output = "Averted Percent")
   m <- m %>% mutate(Output = "Magnitude Reduction")
-  p <- p %>% rename(Reduction = Delay) %>% 
+  p <- p %>% dplyr::rename(Reduction = Delay) %>% 
     mutate(Rank = 0, Output = "Peak Delay")
   
   return(list(long_ens, rbind(a,t,m,p), table, age))

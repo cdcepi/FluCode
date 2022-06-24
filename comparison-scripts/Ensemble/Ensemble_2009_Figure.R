@@ -34,9 +34,10 @@ ens <- dat %>%
   filter(team == "ENS") %>%
   select(Date, paste0(scenarios,"mean")) %>%
   pivot_longer(cols = paste0(scenarios,"mean"), names_to = "scenario", values_to = "sm.mean") %>%
-  mutate(scenario = gsub("_mean", "", scenario))
+  mutate(scenario = gsub("_mean", "", scenario)) %>%
+  mutate(scenario = gsub("RL", "2009-", scenario))
 
-png("fig4.png",width = 850, height=500)
+png("fig4.png",width = 1100, height=700, res= 220)
 ggplot(data = ens, aes(x = Date, group=scenario)) +
   geom_line(aes(y = sm.mean, color=scenario),lwd = 1.5) +
   ylab("% Incident Symptomatic Illness") +
