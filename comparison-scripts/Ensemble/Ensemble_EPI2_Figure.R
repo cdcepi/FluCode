@@ -36,7 +36,7 @@ ens <- dat %>%
   pivot_longer(cols = paste0(scenarios,"mean"), names_to = "scenario", values_to = "sm.mean") %>%
   mutate(scenario = gsub("_mean", "", scenario))
 
-png("supp_fig4b.png",width = 850, height=500)
+png("supp_fig4b.png",width = 1100, height=750, res= 220)
 ggplot(data = ens, aes(x = Date, group=scenario)) +
   geom_line(aes(y = sm.mean, color=scenario),lwd = 1.5) +
   ylab("% Incident Symptomatic Illness") +
